@@ -13,13 +13,13 @@ import kotlinx.android.extensions.LayoutContainer
 class MarkAdapter(private val listener: (Mark) -> Unit) : ListAdapter<Mark, MarkAdapter.MarkHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MarkHolder =
-            MarkHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                            R.layout.item_folder,
-                            parent,
-                            false
-                    )
+        MarkHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_folder,
+                parent,
+                false
             )
+        )
 
     override fun onBindViewHolder(holder: MarkHolder, position: Int) {
         val item = getItem(position)
@@ -30,19 +30,19 @@ class MarkAdapter(private val listener: (Mark) -> Unit) : ListAdapter<Mark, Mark
     class MarkHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: Mark) =
-                with(item) {
+            with(item) {
 
-                }
+            }
     }
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Mark>() {
 
             override fun areItemsTheSame(oldItem: Mark, newItem: Mark): Boolean =
-                    oldItem.id == newItem.id
+                oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: Mark, newItem: Mark): Boolean =
-                    oldItem == newItem
+                oldItem == newItem
         }
     }
 }

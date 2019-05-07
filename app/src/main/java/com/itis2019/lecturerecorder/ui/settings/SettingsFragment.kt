@@ -1,8 +1,7 @@
 package com.itis2019.lecturerecorder.ui.settings
 
-
 import android.os.Bundle
-import 	androidx.preference.PreferenceFragmentCompat
+import    androidx.preference.PreferenceFragmentCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

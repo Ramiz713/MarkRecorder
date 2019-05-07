@@ -19,15 +19,15 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideLectureRepository(lectureDao: LectureDao): LectureRepository =
-            LectureRepositoryImpl(lectureDao)
+        LectureRepositoryImpl(lectureDao)
 
     @Provides
     @Singleton
     fun provideFolderRepository(folderDao: FolderDao): FolderRepository =
-            FolderRepositoryImpl(folderDao)
+        FolderRepositoryImpl(folderDao)
 
     @Provides
     @Singleton
     fun provideMarkRepository(markDao: MarkDao): MarkRepository =
-            MarkRepositoryImpl(markDao)
+        MarkRepositoryImpl(markDao)
 }

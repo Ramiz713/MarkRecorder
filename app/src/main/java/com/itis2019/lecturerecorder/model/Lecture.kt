@@ -11,13 +11,13 @@ import java.util.Date
 @Parcelize
 @Entity(tableName = "lecture_data")
 data class Lecture(
-        @PrimaryKey(autoGenerate = true)
-        val id: Int,
-        val name: String,
-        val duration: Int,
-        @TypeConverters(DateConverter::class)
-        val creationDate: Date,
-        val folderName: String,
-        val folderBackground: Int,
-        val folderId: Int
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val name: String,
+    val duration: Int,
+    @TypeConverters(DateConverter::class)
+    val creationDate: Date,
+    val folderName: String,
+    val folderBackground: Int,
+    val folderId: Int
 ) : Parcelable

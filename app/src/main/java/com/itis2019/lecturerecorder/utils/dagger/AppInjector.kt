@@ -19,16 +19,16 @@ fun Application.autoInject() {
 
                 if (it is FragmentActivity) {
                     it.supportFragmentManager.registerFragmentLifecycleCallbacks(
-                            object : FragmentManager.FragmentLifecycleCallbacks() {
-                                override fun onFragmentActivityCreated(
-                                        fm: FragmentManager,
-                                        f: Fragment,
-                                        savedInstanceState: Bundle?
-                                ) {
-                                    if (f is FragmentInjectable) AndroidSupportInjection.inject(f)
-                                }
+                        object : FragmentManager.FragmentLifecycleCallbacks() {
+                            override fun onFragmentActivityCreated(
+                                fm: FragmentManager,
+                                f: Fragment,
+                                savedInstanceState: Bundle?
+                            ) {
+                                if (f is FragmentInjectable) AndroidSupportInjection.inject(f)
+                            }
 
-                            }, true
+                        }, true
                     )
                 }
             }

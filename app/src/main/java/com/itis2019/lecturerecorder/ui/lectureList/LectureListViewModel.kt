@@ -20,12 +20,12 @@ class LectureListViewModel @Inject constructor(private val repository: LectureRe
 
     fun onLoadLectures(): LiveData<List<Lecture>> {
         disposables.add(repository.getAllLectures()
-                .doOnSubscribe { loadingData.setValue(true) }
-                .doOnNext { loadingData.setValue(false) }
-                .subscribe(
-                        { lectures.value = it },
-                        { errorData.value = it }
-                ))
+            .doOnSubscribe { loadingData.setValue(true) }
+            .doOnNext { loadingData.setValue(false) }
+            .subscribe(
+                { lectures.value = it },
+                { errorData.value = it }
+            ))
         return lectures
     }
 }

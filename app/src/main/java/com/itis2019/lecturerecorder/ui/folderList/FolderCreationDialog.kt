@@ -29,10 +29,10 @@ class FolderCreationDialog : DialogFragment() {
         val inflater = activity?.layoutInflater
         val view = inflater?.inflate(R.layout.folder_creation_dialog, null)
         val dialog = builder.setView(view)
-                .setTitle(R.string.create_folder)
-                .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.cancel, null)
-                .create()
+            .setTitle(R.string.create_folder)
+            .setPositiveButton(R.string.ok, null)
+            .setNegativeButton(R.string.cancel, null)
+            .create()
 
         dialog.setOnShowListener {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -40,7 +40,7 @@ class FolderCreationDialog : DialogFragment() {
                 val name = textInput?.text.toString()
                 if (name.isNotEmpty()) {
                     viewModel.createFolder(
-                            Folder(0, name, Calendar.getInstance().time, R.drawable.gradient_yellow)
+                        Folder(0, name, Calendar.getInstance().time, R.drawable.gradient_yellow)
                     )
                     dismiss()
                 } else textInput?.error = getString(R.string.is_not_valid)

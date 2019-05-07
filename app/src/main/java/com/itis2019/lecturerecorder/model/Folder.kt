@@ -8,10 +8,10 @@ import java.util.Date
 
 @Entity(tableName = "folder_data")
 data class Folder(
-        @PrimaryKey(autoGenerate = true)
-        val id: Int,
-        val name: String,
-        @TypeConverters(DateConverter::class)
-        val creationDate: Date,
-        val background: Int
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val name: String,
+    @TypeConverters(DateConverter::class)
+    val creationDate: Date,
+    val background: Int
 )

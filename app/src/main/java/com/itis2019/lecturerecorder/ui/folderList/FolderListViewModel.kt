@@ -20,15 +20,19 @@ class FolderListViewModel @Inject constructor(private val repository: FolderRepo
 
     fun onLoadFolders(): LiveData<List<Folder>> {
         disposables.add(repository.getAllFolders()
-                .doOnSubscribe { loadingData.setValue(true) }
-                .doOnNext { loadingData.setValue(false) }
-                .subscribe(
-                        { folders.value = it },
-                        { errorData.value = it }
-                ))
+            .doOnSubscribe { loadingData.setValue(true) }
+            .doOnNext { loadingData.setValue(false) }
+            .subscribe(
+                { folders.value = it },
+                { errorData.value = it }
+            ))
         return folders
     }
 
     fun createFolder(folder: Folder) =
-            repository.insertFolder(folder)
+        disposables.add(repository.insertFolder(folder)
+            .subscribe(
+                {},
+                { errorData.value = it })
+        )
 }

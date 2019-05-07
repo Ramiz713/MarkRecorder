@@ -17,13 +17,13 @@ import java.text.DateFormat
 class LectureAdapter(private val listener: (Lecture) -> Unit) : ListAdapter<Lecture, LectureAdapter.LectureHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LectureHolder =
-            LectureHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                            R.layout.item_lecture,
-                            parent,
-                            false
-                    )
+        LectureHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.item_lecture,
+                parent,
+                false
             )
+        )
 
     override fun onBindViewHolder(holder: LectureHolder, position: Int) {
         val item = getItem(position)
@@ -34,29 +34,29 @@ class LectureAdapter(private val listener: (Lecture) -> Unit) : ListAdapter<Lect
     class LectureHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(item: Lecture) =
-                with(item) {
-                    val context = containerView.context
-                    card_view.background = context.getDrawable(folderBackground)
-                    val date = DateFormat.getDateInstance().format(creationDate)
+            with(item) {
+                val context = containerView.context
+                card_view.background = context.getDrawable(folderBackground)
+                val date = DateFormat.getDateInstance().format(creationDate)
 
-                    val getFromHtml = { stringId: Int, string: String ->
-                        HtmlCompat.fromHtml(context.getString(stringId, string), FROM_HTML_MODE_LEGACY)
-                    }
-                    tv_lecture_name.text = getFromHtml(R.string.lecture_topic, name)
-                    tv_subject.text = getFromHtml(R.string.subject, folderName)
-                    tv_date.text = getFromHtml(R.string.date, date)
-                    tv_duration.text = getFromHtml(R.string.duration, "1 hour 15 minutes")
+                val getFromHtml = { stringId: Int, string: String ->
+                    HtmlCompat.fromHtml(context.getString(stringId, string), FROM_HTML_MODE_LEGACY)
                 }
+                tv_lecture_name.text = getFromHtml(R.string.lecture_topic, name)
+                tv_subject.text = getFromHtml(R.string.subject, folderName)
+                tv_date.text = getFromHtml(R.string.date, date)
+                tv_duration.text = getFromHtml(R.string.duration, "1 hour 15 minutes")
+            }
     }
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Lecture>() {
 
             override fun areItemsTheSame(oldItem: Lecture, newItem: Lecture): Boolean =
-                    oldItem.id == newItem.id
+                oldItem.id == newItem.id
 
             override fun areContentsTheSame(oldItem: Lecture, newItem: Lecture): Boolean =
-                    oldItem == newItem
+                oldItem == newItem
         }
     }
 }

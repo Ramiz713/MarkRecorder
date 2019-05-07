@@ -25,12 +25,12 @@ abstract class BaseFragment : Fragment() {
     }
 
     protected fun observeLoading(view: View) =
-            viewModel.isLoading().observe(viewLifecycleOwner, Observer {
-                view.visibility = if (it) View.VISIBLE else View.GONE
-            })
+        viewModel.isLoading().observe(viewLifecycleOwner, Observer {
+            view.visibility = if (it) View.VISIBLE else View.GONE
+        })
 
     protected fun observeError(view: View) =
-            viewModel.error().observe(viewLifecycleOwner, Observer {
-                Snackbar.make(view, it.localizedMessage, Snackbar.LENGTH_SHORT).show()
-            })
+        viewModel.error().observe(viewLifecycleOwner, Observer {
+            Snackbar.make(view, it.localizedMessage, Snackbar.LENGTH_SHORT).show()
+        })
 }

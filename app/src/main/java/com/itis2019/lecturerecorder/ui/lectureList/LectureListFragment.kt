@@ -31,8 +31,8 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_lecture_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,15 +49,15 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     }
 
     private fun observeNavigateToRecorder() =
-            viewModel.navigateToRecorder.observe(this, Observer {
-                findNavController(this).navigate(R.id.action_navigation_lectures_to_recorderActivity)
-            })
+        viewModel.navigateToRecorder.observe(this, Observer {
+            findNavController(this).navigate(R.id.action_navigation_lectures_to_recorderActivity)
+        })
 
     private fun observeLectureList() =
-            viewModel.onLoadLectures().observe(this, Observer {
-                if (it.isEmpty())
-                    adapter.submitList(it)
-            })
+        viewModel.onLoadLectures().observe(this, Observer {
+            if (it.isEmpty())
+                adapter.submitList(it)
+        })
 
     private fun initRecycler() {
         val manager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)

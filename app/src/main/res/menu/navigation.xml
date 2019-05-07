@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-            android:id="@+id/navigation_lectures"
-            android:icon="@drawable/ic_record_voice_over_black_24dp"/>
+        android:id="@+id/navigation_lectures"
+        android:icon="@drawable/ic_record_voice_over_black_24dp" />
 
     <item
-            android:id="@+id/navigation_folders"
-            android:icon="@drawable/ic_folder_black_24dp"
-            android:title="@string/title_folders"/>
+        android:id="@+id/navigation_folders"
+        android:icon="@drawable/ic_folder_black_24dp"
+        android:title="@string/title_folders" />
 
     <item
-            android:id="@+id/navigation_settings"
-            android:icon="@drawable/ic_settings_black_24dp"
-            android:title="@string/title_settings"/>
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/title_settings" />
 
 </menu>
