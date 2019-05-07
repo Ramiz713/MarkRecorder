@@ -1,14 +1,14 @@
 package com.itis2019.lecturerecorder.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.itis2019.lecturerecorder.R
+import com.itis2019.lecturerecorder.utils.dagger.DiActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DiActivity() {
 
     private lateinit var navController: NavController
 

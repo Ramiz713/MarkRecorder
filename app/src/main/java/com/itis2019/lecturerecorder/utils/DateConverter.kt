@@ -1,7 +1,7 @@
 package com.itis2019.lecturerecorder.utils
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.util.Date
 
 class DateConverter {
     @TypeConverter

@@ -2,27 +2,30 @@ package com.itis2019.lecturerecorder.ui.lectureList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.itis2019.lecturerecorder.repository.LectureRepository
 import com.itis2019.lecturerecorder.model.Lecture
-import com.itis2019.lecturerecorder.model.Response
-import io.reactivex.rxkotlin.subscribeBy
+import com.itis2019.lecturerecorder.ui.base.BaseViewModel
+import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
+import javax.inject.Inject
 
-class LectureListViewModel(private val repository: LectureRepository) : ViewModel() {
+class LectureListViewModel @Inject constructor(private val repository: LectureRepository) : BaseViewModel() {
 
-    private var loadingLiveData = MutableLiveData<Boolean>()
-    private var lectures = MutableLiveData<Response<List<Lecture>>>()
+    private var lectures = MutableLiveData<List<Lecture>>()
+    private val lectureRecordBtnClicked = SingleLiveEvent<Any>()
 
-    fun isLoading(): LiveData<Boolean> = loadingLiveData
+    val navigateToRecorder: LiveData<Any?>
+        get() = lectureRecordBtnClicked
 
-    @Suppress("CheckResult")
-    fun onLoadLectures(): LiveData<Response<List<Lecture>>> {
-        repository.getAllLectures()
-            .doOnSubscribe { loadingLiveData.setValue(true) }
-            .doAfterTerminate { loadingLiveData.setValue(false) }
-            .subscribeBy {
-                 lectures.value = Response.success(it)
-            }
+    fun lectureRecordButtonClicked() = lectureRecordBtnClicked.call()
+
+    fun onLoadLectures(): LiveData<List<Lecture>> {
+        disposables.add(repository.getAllLectures()
+                .doOnSubscribe { loadingData.setValue(true) }
+                .doOnNext { loadingData.setValue(false) }
+                .subscribe(
+                        { lectures.value = it },
+                        { errorData.value = it }
+                ))
         return lectures
     }
 }

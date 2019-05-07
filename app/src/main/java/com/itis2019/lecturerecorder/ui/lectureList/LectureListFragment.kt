@@ -1,65 +1,82 @@
 package com.itis2019.lecturerecorder.ui.lectureList
 
-
+import android.content.res.Configuration
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.utils.provideViewModel
+import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
+import com.itis2019.lecturerecorder.model.Lecture
+import com.itis2019.lecturerecorder.ui.adapters.LectureAdapter
+import com.itis2019.lecturerecorder.ui.base.BaseFragment
+import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_lecture_list.*
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
 
+class LectureListFragment : BaseFragment(), FragmentInjectable {
 
-class LectureListFragment : Fragment(), KodeinAware {
+    override lateinit var viewModel: LectureListViewModel
 
-    override val kodein: Kodein by closestKodein()
+    private val adapter = LectureAdapter { lecture: Lecture -> }
 
-    private val viewModel: LectureListViewModel by provideViewModel()
-
-    private val adapter = LectureAdapter { position: Int ->
+    override fun initViewModel() {
+        AndroidSupportInjection.inject(this)
+        viewModel = injectViewModel(viewModelFactory)
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? = inflater.inflate(R.layout.fragment_lecture_list, container, false)
 
-        val view = inflater.inflate(R.layout.fragment_lecture_list, container, false)
-        initRecycler(view)
-        observeLectureList(view)
-        observeLoading()
-        return view
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initRecycler()
+        extended_button.setOnClickListener { viewModel.lectureRecordButtonClicked() }
     }
 
-    private fun observeLoading() {
-        viewModel.isLoading().observe(this, Observer {
-            progress_bar.visibility = if (it) View.VISIBLE else View.GONE
-        })
+    override fun initObservers(view: View) {
+        observeLectureList()
+        observeNavigateToRecorder()
+        observeLoading(progress_bar)
+        observeError(view)
     }
 
-    private fun observeLectureList(view: View) {
-        viewModel.onLoadLectures().observe(this, Observer {
-            when {
-                it?.data != null -> adapter.submitList(it.data)
-                it?.error != null -> Snackbar.make(view, it.error.localizedMessage, Snackbar.LENGTH_SHORT).show()
-                else -> Snackbar.make(view, "We have problem!!!", Snackbar.LENGTH_SHORT).show()
+    private fun observeNavigateToRecorder() =
+            viewModel.navigateToRecorder.observe(this, Observer {
+                findNavController(this).navigate(R.id.action_navigation_lectures_to_recorderActivity)
+            })
+
+    private fun observeLectureList() =
+            viewModel.onLoadLectures().observe(this, Observer {
+                if (it.isEmpty())
+                    adapter.submitList(it)
+            })
+
+    private fun initRecycler() {
+        val manager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            GridLayoutManager(activity, 2)
+        else LinearLayoutManager(activity)
+
+        rv_lectures.adapter = adapter
+        rv_lectures.layoutManager = manager
+        rv_lectures.isNestedScrollingEnabled = false
+        nested_scroll_view.isNestedScrollingEnabled = true
+
+        nested_scroll_view.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
+            if (scrollY > 0) {
+                extended_button.shrink(true)
+                return@setOnScrollChangeListener
             }
-        })
-    }
-
-    private fun initRecycler(view: View) {
-        val manager = LinearLayoutManager(activity)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rv_lectures)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = manager
+            val firstItem = manager.findFirstCompletelyVisibleItemPosition()
+            if (firstItem == 0)
+                extended_button.extend(true)
+        }
     }
 }

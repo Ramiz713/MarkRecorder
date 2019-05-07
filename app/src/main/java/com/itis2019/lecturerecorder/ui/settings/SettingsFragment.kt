@@ -19,6 +19,4 @@ class SettingsFragment : PreferenceFragmentCompat() {
     ): View? {
         return inflater.inflate(R.layout.fragment_settings, container, false)
     }
-
-
 }

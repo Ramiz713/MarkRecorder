@@ -7,10 +7,20 @@
     <string name="recent_lectures">RECENT \nLECTURES</string>
     <string name="your_folders">YOUR\nFOLDERS</string>
     <string name="settings">SETTINGS</string>
+    <string name="marks">Marks</string>
+    <string name="countdown">00:00:00</string>
+
+    <string name="ok">@android:string/ok</string>
+    <string name="cancel">@android:string/cancel</string>
+    <string name="is_not_valid">Cannot be empty</string>
 
     <string name="lecture_topic"><![CDATA[<b>Lecture topic:</b> %1$s]]></string>
     <string name="subject"><![CDATA[<b>Subject:</b> %1$s]]></string>
     <string name="date"><![CDATA[<b>Date:</b> %1$s]]></string>
     <string name="duration"><![CDATA[<b>Duration:</b> %1$s]]></string>
+
+    <string name="default_folder">Default</string>
+    <string name="create_folder">Folder creation</string>
+    <string name="subject_name">Subject name</string>
 
 </resources>

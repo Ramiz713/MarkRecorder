@@ -3,18 +3,25 @@ package com.itis2019.lecturerecorder.repository.impl
 import com.itis2019.lecturerecorder.model.Mark
 import com.itis2019.lecturerecorder.repository.database.MarkDao
 import com.itis2019.lecturerecorder.repository.MarkRepository
-import io.reactivex.Single
+import com.itis2019.lecturerecorder.utils.subscribeObservableOnIoObserveOnUi
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 
-class MarkRepositoryImpl(markDao: MarkDao): MarkRepository {
+class MarkRepositoryImpl(private val markDao: MarkDao) : MarkRepository {
+
+    override fun getLectureMarks(lectureId: Int): Flowable<List<Mark>> =
+            markDao.getAll().observeOn(AndroidSchedulers.mainThread())
+
     override fun insertMark(mark: Mark) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Observable.fromCallable { markDao.insert(mark) }
+                .subscribeObservableOnIoObserveOnUi()
+                .subscribe()
     }
 
     override fun deleteMark(mark: Mark) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getAllMark(): Single<List<Mark>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Observable.fromCallable { markDao.delete(mark) }
+                .subscribeObservableOnIoObserveOnUi()
+                .subscribe()
     }
 }

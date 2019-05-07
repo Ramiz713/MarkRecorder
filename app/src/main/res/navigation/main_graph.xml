@@ -9,7 +9,11 @@
         android:id="@+id/navigation_lectures"
         android:name="com.itis2019.lecturerecorder.ui.lectureList.LectureListFragment"
         android:label="fragment_lecture_list"
-        tools:layout="@layout/fragment_lecture_list" />
+        tools:layout="@layout/fragment_lecture_list">
+        <action
+            android:id="@+id/action_navigation_lectures_to_recorderActivity"
+            app:destination="@id/recorderActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_folders"
@@ -22,5 +26,10 @@
         android:name="com.itis2019.lecturerecorder.ui.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <activity
+        android:id="@+id/recorderActivity"
+        android:name="com.itis2019.lecturerecorder.ui.recorder.RecorderActivity"
+        android:label="activity_recorder"
+        tools:layout="@layout/activity_recorder" />
 
 </navigation>

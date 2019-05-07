@@ -1,11 +1,27 @@
 package com.itis2019.lecturerecorder
 
+import android.app.Activity
 import android.app.Application
-import com.itis2019.lecturerecorder.di.initKodein
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
+import com.itis2019.lecturerecorder.di.DaggerAppComponent
+import com.itis2019.lecturerecorder.utils.dagger.autoInject
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
+import javax.inject.Inject
 
-class App : Application(), KodeinAware {
+class App : Application(), HasActivityInjector {
 
-    override val kodein: Kodein = initKodein(this)
+    @Inject
+    lateinit var activityInjector: DispatchingAndroidInjector<Activity>
+
+    override fun onCreate() {
+        super.onCreate()
+        DaggerAppComponent.builder()
+                .application(this)
+                .build()
+                .inject(this)
+        autoInject()
+    }
+
+    override fun activityInjector(): AndroidInjector<Activity> = activityInjector
 }
