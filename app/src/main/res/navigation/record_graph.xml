@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/record_graph"
+    app:startDestination="@id/recordingFragment">
+
+    <fragment
+        android:id="@+id/recordingFragment"
+        android:name="com.itis2019.lecturerecorder.ui.recorder.recording.RecordingFragment"
+        android:label="recording_fragment"
+        tools:layout="@layout/recording_fragment">
+        <action
+            android:id="@+id/action_recordingFragment_to_lectureConfigFragment"
+            app:destination="@id/lectureConfigFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/lectureConfigFragment"
+        android:name="com.itis2019.lecturerecorder.ui.recorder.lectureConfig.LectureConfigFragment"
+        android:label="lecture_config_fragment"
+        tools:layout="@layout/lecture_config_fragment" />
+</navigation>
