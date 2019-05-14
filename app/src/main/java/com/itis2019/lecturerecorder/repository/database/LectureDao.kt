@@ -1,9 +1,6 @@
 package com.itis2019.lecturerecorder.repository.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.itis2019.lecturerecorder.model.Lecture
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -16,6 +13,9 @@ interface LectureDao {
 
     @Query("SELECT * FROM lecture_data WHERE id = :id")
     fun getById(id: Int): Single<Lecture>
+
+    @Update
+    fun updateLecture(lecture: Lecture)
 
     @Insert
     fun insert(lecture: Lecture)

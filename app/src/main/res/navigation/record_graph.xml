@@ -12,7 +12,16 @@
         tools:layout="@layout/recording_fragment">
         <action
             android:id="@+id/action_recordingFragment_to_lectureConfigFragment"
-            app:destination="@id/lectureConfigFragment" />
+            app:destination="@id/lectureConfigFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/lectureConfigFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="Lecture"
+            app:argType="com.itis2019.lecturerecorder.model.Lecture" />
+        <argument
+            android:name="Marks"
+            app:argType="com.itis2019.lecturerecorder.model.Mark[]" />
     </fragment>
     <fragment
         android:id="@+id/lectureConfigFragment"

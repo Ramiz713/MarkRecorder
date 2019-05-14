@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
@@ -19,6 +20,11 @@ class LectureConfigFragment : BaseFragment() {
         viewModel = injectViewModel(viewModelFactory)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,6 +33,5 @@ class LectureConfigFragment : BaseFragment() {
     }
 
     override fun initObservers(view: View) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

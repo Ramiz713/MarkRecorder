@@ -38,9 +38,9 @@ class FolderListFragment : BaseFragment() {
     }
 
     override fun initObservers(view: View) {
-        observeFolderList()
         observeError(view)
         observeLoading(progress_bar)
+        observeFolderList()
         observeFolderCreation()
     }
 

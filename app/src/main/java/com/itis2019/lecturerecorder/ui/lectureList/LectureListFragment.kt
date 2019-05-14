@@ -1,5 +1,6 @@
 package com.itis2019.lecturerecorder.ui.lectureList
 
+import android.Manifest
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.itis2019.lecturerecorder.model.Lecture
 import com.itis2019.lecturerecorder.ui.adapters.LectureAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_lecture_list.*
 
@@ -38,7 +40,15 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        extended_button.setOnClickListener { viewModel.lectureRecordButtonClicked() }
+
+        extended_button.setOnClickListener {
+            runWithPermissions(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+            ) {
+                viewModel.lectureRecordButtonClicked()
+            }
+        }
     }
 
     override fun initObservers(view: View) {

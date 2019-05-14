@@ -11,6 +11,8 @@ interface LectureRepository {
 
     fun getLecture(id: Int): Single<Lecture>
 
+    fun updateLecture(lecture: Lecture): Observable<Unit>
+
     fun insertLecture(lecture: Lecture): Observable<Unit>
 
     fun deleteLecture(lecture: Lecture): Observable<Unit>

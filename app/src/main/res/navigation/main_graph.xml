@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_lecture_list">
         <action
             android:id="@+id/action_navigation_lectures_to_recorderActivity"
-            app:destination="@id/recorderActivity" />
+            app:destination="@+id/recorderActivity" />
     </fragment>
 
     <fragment

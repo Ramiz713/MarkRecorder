@@ -14,9 +14,10 @@ data class Lecture(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val name: String,
-    val duration: Int,
+    val duration: Long,
     @TypeConverters(DateConverter::class)
     val creationDate: Date,
+    val filePath: String,
     val folderName: String,
     val folderBackground: Int,
     val folderId: Int

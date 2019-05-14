@@ -19,6 +19,11 @@ class LectureRepositoryImpl(private val lectureDao: LectureDao) : LectureReposit
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
+    override fun updateLecture(lecture: Lecture): Observable<Unit> =
+        Observable.fromCallable { lectureDao.updateLecture(lecture) }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+
     override fun insertLecture(lecture: Lecture): Observable<Unit> =
         Observable.fromCallable { lectureDao.delete(lecture) }
             .subscribeOn(Schedulers.io())

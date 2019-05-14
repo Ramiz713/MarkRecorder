@@ -25,7 +25,7 @@ class FolderCreationDialog : DialogFragment() {
         AndroidSupportInjection.inject(this)
         viewModel = (parentFragment as Fragment).injectViewModel(viewModelFactory)
 
-        val builder = AlertDialog.Builder(activity, R.style.DialogTheme)
+        val builder = AlertDialog.Builder(activity)
         val inflater = activity?.layoutInflater
         val view = inflater?.inflate(R.layout.folder_creation_dialog, null)
         val dialog = builder.setView(view)
