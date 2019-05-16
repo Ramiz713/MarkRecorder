@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Lecture
+import com.itis2019.lecturerecorder.entities.Lecture
+import com.itis2019.lecturerecorder.utils.getTimeInFormatWithSeconds
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_lecture.*
 import java.text.DateFormat
@@ -45,7 +46,7 @@ class LectureAdapter(private val listener: (Lecture) -> Unit) : ListAdapter<Lect
                 tv_lecture_name.text = getFromHtml(R.string.lecture_topic, name)
                 tv_subject.text = getFromHtml(R.string.subject, folderName)
                 tv_date.text = getFromHtml(R.string.date, date)
-                tv_duration.text = getFromHtml(R.string.duration, "1 hour 15 minutes")
+                tv_duration.text = getFromHtml(R.string.duration, getTimeInFormatWithSeconds(duration))
             }
     }
 

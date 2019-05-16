@@ -1,6 +1,6 @@
 package com.itis2019.lecturerecorder.repository
 
-import com.itis2019.lecturerecorder.model.Mark
+import com.itis2019.lecturerecorder.entities.Mark
 import io.reactivex.Flowable
 import io.reactivex.Observable
 

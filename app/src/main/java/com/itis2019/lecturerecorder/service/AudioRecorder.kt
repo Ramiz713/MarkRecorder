@@ -6,7 +6,9 @@ interface AudioRecorder  {
 
     abstract fun startRecord()
 
-    abstract fun finishRecord(): String
+    abstract fun finishRecordWithSaving(): String
+
+    abstract fun finishRecordWithoutSaving()
 
     abstract fun pauseRecord()
 
@@ -15,6 +17,4 @@ interface AudioRecorder  {
     abstract fun getRawBytes() : Flowable<ByteArray>
 
     abstract fun getTime() : Flowable<Long>
-
-    abstract fun isRecording(): Boolean
 }

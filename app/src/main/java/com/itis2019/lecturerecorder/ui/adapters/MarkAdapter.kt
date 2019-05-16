@@ -7,15 +7,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Mark
+import com.itis2019.lecturerecorder.entities.Mark
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_mark.*
 
 class MarkAdapter(private val listener: (Mark) -> Unit) : ListAdapter<Mark, MarkAdapter.MarkHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MarkHolder =
         MarkHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.item_folder,
+                R.layout.item_mark,
                 parent,
                 false
             )
@@ -31,7 +32,7 @@ class MarkAdapter(private val listener: (Mark) -> Unit) : ListAdapter<Mark, Mark
 
         fun bind(item: Mark) =
             with(item) {
-
+                tv_mark_name.text = name
             }
     }
 

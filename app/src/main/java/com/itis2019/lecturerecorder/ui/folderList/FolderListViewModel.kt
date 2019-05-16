@@ -2,7 +2,7 @@ package com.itis2019.lecturerecorder.ui.folderList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.repository.FolderRepository
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent

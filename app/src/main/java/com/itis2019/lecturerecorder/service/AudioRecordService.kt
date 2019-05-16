@@ -13,7 +13,7 @@ import io.reactivex.Flowable
 
 class AudioRecordService : Service(), AudioRecorder {
 
-    private val recorder = AudioRecorderImpl()
+    private val audioRecorder = AudioRecorderImpl()
 
     private val binder = AudioRecordBinder()
 
@@ -39,33 +39,21 @@ class AudioRecordService : Service(), AudioRecorder {
 
     override fun onBind(intent: Intent?): IBinder = binder
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+    override fun getTime(): Flowable<Long> = audioRecorder.getTime()
 
     override fun startRecord() {
-        recorder.startRecord()
+        audioRecorder.startRecord()
     }
 
-    override fun finishRecord(): String =
-        recorder.finishRecord()
+    override fun pauseRecord() = audioRecorder.pauseRecord()
 
-    override fun pauseRecord() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun resumeRecord() = audioRecorder.resumeRecord()
 
-    override fun resumeRecord() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getRawBytes(): Flowable<ByteArray> = audioRecorder.getRawBytes()
 
-    override fun getRawBytes(): Flowable<ByteArray> =
-        recorder.getRawBytes()
+    override fun finishRecordWithSaving(): String =
+        audioRecorder.finishRecordWithSaving()
 
-    override fun getTime(): Flowable<Long> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isRecording(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun finishRecordWithoutSaving() =
+        audioRecorder.finishRecordWithoutSaving()
 }

@@ -4,20 +4,23 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Environment
-import com.itis2019.lecturerecorder.utils.FileSaverHelpers.Companion.updateWavHeader
-import com.itis2019.lecturerecorder.utils.FileSaverHelpers.Companion.writeWavHeader
+import com.itis2019.lecturerecorder.utils.updateWavHeader
+import com.itis2019.lecturerecorder.utils.writeWavHeader
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.PublishProcessor
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.DisposableSubscriber
 import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.TimeUnit
 
 class AudioRecorderImpl : AudioRecorder {
 
     private var isRecording = true
+    private var isPaused = false
+
+    private var totalTime: Long = 0
 
     companion object {
         private const val SAMPLE_RATE = 44100
@@ -44,17 +47,30 @@ class AudioRecorderImpl : AudioRecorder {
 
     private val disposables = CompositeDisposable()
 
+    override fun getRawBytes(): Flowable<ByteArray> =
+        recordDataPublishProcessor
+
+    override fun getTime(): Flowable<Long> = timer
+
+    private val timer: Flowable<Long> =
+        Flowable.interval(1000, TimeUnit.MILLISECONDS)
+            .filter { !isPaused }
+            .map {
+                totalTime += 1000
+                return@map totalTime
+            }
+
     private val dataInBytes: Flowable<ByteArray> =
         Flowable.create({ emitter ->
-            audioRecord.startRecording()
             while (isRecording) {
-                val recordBuffer = ByteArray(bufferSize)
-                val bytes = audioRecord.read(recordBuffer, 0, bufferSize)
-                if (bytes == 0)
-                    break
-                emitter.onNext(recordBuffer)
+                if (!isPaused) {
+                    val recordBuffer = ByteArray(bufferSize)
+                    audioRecord.read(recordBuffer, 0, bufferSize)
+                    emitter.onNext(recordBuffer)
+                }
             }
-            audioRecord.stop()
+            audioRecord.release()
+            emitter.onComplete()
         }, BackpressureStrategy.DROP)
 
     private val recordDataPublishProcessor = PublishProcessor.create<ByteArray>()
@@ -65,22 +81,10 @@ class AudioRecorderImpl : AudioRecorder {
         createNewFile()
         dataInBytes.subscribeOn(Schedulers.io()).subscribe(recordDataPublishProcessor)
 
-        disposables.add(recordDataPublishProcessor.onBackpressureBuffer()
-            .observeOn(Schedulers.io())
-            .subscribeWith(object : DisposableSubscriber<ByteArray>() {
-                override fun onComplete() {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onError(t: Throwable?) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-                override fun onNext(t: ByteArray?) {
-                    t?.let { writeData(it) }
-                }
-            })
-        )
+        disposables.add(
+            recordDataPublishProcessor.onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .subscribe { writeData(it) })
     }
 
     private fun createNewFile() {
@@ -107,46 +111,29 @@ class AudioRecorderImpl : AudioRecorder {
     }
 
     override fun pauseRecord() {
-        isRecording = false
+        isPaused = true
+        audioRecord.stop()
     }
 
     override fun resumeRecord() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        audioRecord.startRecording()
+        isPaused = false
     }
 
-
-    override fun finishRecord(): String {
-        isRecording = false
-        disposables.clear()
-        onRecordingStopped()
+    override fun finishRecordWithSaving(): String {
+        finishRecording()
+        updateWavHeader(file)
         return file.absolutePath
     }
 
-    override fun getRawBytes(): Flowable<ByteArray> =
-        dataInBytes.map { buffer -> processRawBytesForVisualizer(buffer) }
-
-    private fun processRawBytesForVisualizer(buffer: ByteArray): ByteArray {
-        val bufferForVisualize = ByteArray(512)
-        var tempCounter = 0
-        val audioLength = (bufferSize * 1000F / SAMPLE_RATE).toInt()
-
-        for (idx in 0 until bufferSize step (bufferSize / (audioLength + bufferForVisualize.size))) {
-            if (tempCounter >= bufferForVisualize.size) {
-                break
-            }
-            bufferForVisualize[tempCounter++] = buffer[idx]
-        }
-        return bufferForVisualize
+    override fun finishRecordWithoutSaving() {
+        finishRecording()
+        file.deleteOnExit()
     }
 
-    override fun getTime(): Flowable<Long> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isRecording(): Boolean = isRecording
-
-    private fun onRecordingStopped() {
-            os.close()
-            updateWavHeader(file)
+    private fun finishRecording() {
+        isRecording = false
+        disposables.clear()
+        os.close()
     }
 }

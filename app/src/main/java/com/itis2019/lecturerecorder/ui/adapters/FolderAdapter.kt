@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_folder.*
 

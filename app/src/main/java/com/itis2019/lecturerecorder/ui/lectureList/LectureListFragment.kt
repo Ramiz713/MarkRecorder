@@ -1,7 +1,6 @@
 package com.itis2019.lecturerecorder.ui.lectureList
 
 import android.Manifest
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +8,10 @@ import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
-import com.itis2019.lecturerecorder.model.Lecture
+import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.ui.adapters.LectureAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -65,15 +63,11 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
 
     private fun observeLectureList() =
         viewModel.onLoadLectures().observe(this, Observer {
-            if (it.isEmpty())
-                adapter.submitList(it)
+            adapter.submitList(it)
         })
 
     private fun initRecycler() {
-        val manager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            GridLayoutManager(activity, 2)
-        else LinearLayoutManager(activity)
-
+        val manager = LinearLayoutManager(activity)
         rv_lectures.adapter = adapter
         rv_lectures.layoutManager = manager
         rv_lectures.isNestedScrollingEnabled = false

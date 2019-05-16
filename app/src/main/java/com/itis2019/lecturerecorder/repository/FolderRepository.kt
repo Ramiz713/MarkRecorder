@@ -1,6 +1,6 @@
 package com.itis2019.lecturerecorder.repository
 
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single

@@ -31,6 +31,8 @@
 
     <string name="default_folder">Default</string>
     <string name="create_folder">Folder creation</string>
+    <string name="create_mark">Mark creation</string>
+    <string name="choose_folder">Choose folder</string>
     <string name="subject_name">Subject name</string>
 
 </resources>

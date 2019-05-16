@@ -1,4 +1,4 @@
-package com.itis2019.lecturerecorder.model
+package com.itis2019.lecturerecorder.repository.dbEntities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,7 +7,7 @@ import com.itis2019.lecturerecorder.utils.DateConverter
 import java.util.Date
 
 @Entity(tableName = "folder_data")
-data class Folder(
+data class DbFolder(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val name: String,

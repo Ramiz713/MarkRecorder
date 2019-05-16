@@ -1,6 +1,5 @@
 package com.itis2019.lecturerecorder.ui.folderList
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.ui.adapters.FolderAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -57,11 +56,8 @@ class FolderListFragment : BaseFragment() {
         })
 
     private fun initRecycler() {
-        val manager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            GridLayoutManager(activity, 3)
-        else GridLayoutManager(activity, 2)
         rv_folders.adapter = adapter
-        rv_folders.layoutManager = manager
+        rv_folders.layoutManager = GridLayoutManager(activity, 2)
         rv_folders.isNestedScrollingEnabled = false
     }
 }

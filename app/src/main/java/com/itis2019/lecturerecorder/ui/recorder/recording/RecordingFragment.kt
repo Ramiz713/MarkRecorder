@@ -11,23 +11,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Lecture
+import com.itis2019.lecturerecorder.entities.Lecture
+import com.itis2019.lecturerecorder.entities.Mark
 import com.itis2019.lecturerecorder.service.AudioRecordService
+import com.itis2019.lecturerecorder.ui.adapters.MarkAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.getTimeInFormatWithSeconds
+import com.yalantis.waves.util.Horizon
 import dagger.android.support.AndroidSupportInjection
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.recording_fragment.*
-import kotlinx.coroutines.*
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import java.util.*
+import java.util.Calendar
 
-class RecordingFragment : BaseFragment(), CoroutineScope by MainScope() {
+class RecordingFragment : BaseFragment() {
 
     private lateinit var service: AudioRecordService
     private var bound: Boolean = false
+    private var isInitialState = true
+    private var totalTime: Long = 0
+    private val adapter = MarkAdapter { }
 
     private val connection = object : ServiceConnection {
 
@@ -43,6 +47,7 @@ class RecordingFragment : BaseFragment(), CoroutineScope by MainScope() {
     }
 
     override lateinit var viewModel: RecordingViewModel
+    private lateinit var horizon: Horizon
 
     override fun initViewModel() {
         AndroidSupportInjection.inject(this)
@@ -54,57 +59,99 @@ class RecordingFragment : BaseFragment(), CoroutineScope by MainScope() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.recording_fragment, container, false)
 
-    //логика пока не вынесена во viewModel
-    private val disposable = CompositeDisposable()
-
-    override fun initObservers(view: View) {
-        observeIsPlaying()
-        observeNavigateToLectureConfig()
-        btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked(btn_play_pause.isPlay) }
-        btn_stop.setOnClickListener { viewModel.stopBtnClicked() }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        horizon = Horizon(visualizer, resources.getColor(R.color.black), 44100, 1, 16)
+        btn_stop.isEnabled = false
+        btn_mark.isEnabled = false
     }
-
-    private fun observeIsPlaying() =
-        viewModel.isPlaying().observe(this, Observer {
-            btn_play_pause.change(it, true)
-            activity?.startService(Intent(activity, AudioRecordService::class.java))
-            service.startRecord()
-
-            disposable.add(service.getRawBytes()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { visualizer.setRawAudioBytes(it) })
-        })
-
-    private fun observeNavigateToLectureConfig() =
-        viewModel.navigateToLectureConfig.observe(this, Observer {
-            disposable.clear()
-            val path = service.finishRecord()
-            activity?.run {
-                unbindService(connection)
-                stopService(Intent(activity, AudioRecordService::class.java))
-            }
-            val lecture = Lecture(0, "", 0, Calendar.getInstance().time, path, "default", 0, 0)
-            val action = RecordingFragmentDirections.actionRecordingFragmentToLectureConfigFragment()
-            findNavController(this).navigate(action)
-        })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Intent(activity, AudioRecordService::class.java).also { intent ->
-            activity?.run {
-                bindService(intent, connection, Context.BIND_AUTO_CREATE)
-            }
+            activity?.run { bindService(intent, connection, Context.BIND_AUTO_CREATE) }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        disposable.dispose()
         activity?.run {
             unbindService(connection)
             stopService(Intent(activity, AudioRecordService::class.java))
         }
         bound = false
+    }
+
+    override fun initObservers(view: View) {
+        observeIsPlaying()
+        observeNavigateToLectureConfig()
+        observeMarkCreation()
+        observeMarkList()
+        btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked(btn_play_pause.isPlay) }
+        btn_stop.setOnClickListener { viewModel.stopBtnClicked() }
+        btn_mark.setOnClickListener { viewModel.markBtnClicked() }
+        initRecycler()
+    }
+
+    private fun observeIsPlaying() =
+        viewModel.isPlaying().observe(this, Observer {
+            btn_play_pause.change(it, true)
+            if (isInitialState) {
+                initFlowableData()
+                service.startRecord()
+                btn_stop.isEnabled = true
+                btn_mark.isEnabled = true
+                isInitialState = false
+                return@Observer
+            }
+            if (it) service.pauseRecord()
+            else service.resumeRecord()
+        })
+
+    private fun initFlowableData() {
+        viewModel.setDataSource(service.getRawBytes(), service.getTime())
+        activity?.startService(Intent(activity, AudioRecordService::class.java))
+        viewModel.fetchMarks().value?.size
+        observeFetchingRawBytesData()
+        observeFetchingChronometerData()
+    }
+
+    private fun observeNavigateToLectureConfig() =
+        viewModel.navigateToLectureConfig.observe(this, Observer {
+            val path = service.finishRecordWithSaving()
+            activity?.run {
+                unbindService(connection)
+                stopService(Intent(activity, AudioRecordService::class.java))
+            }
+            val lecture = Lecture(0, "", totalTime, Calendar.getInstance().time, path, "", 0, 0)
+            val action = RecordingFragmentDirections
+                .actionRecordingFragmentToLectureConfigFragment(lecture, adapter.currentList.toTypedArray())
+            findNavController(this).navigate(action)
+        })
+
+    private fun observeMarkCreation() =
+        viewModel.showMarkCreationDialog.observe(this, Observer {
+            fragmentManager?.let {
+                MarkCreationDialog.newInstance(totalTime).show(it, "MarkCreationDialog")
+            }
+        })
+
+    private fun observeMarkList() =
+        viewModel.fetchMarks().observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
+
+    private fun observeFetchingRawBytesData() =
+        viewModel.fetchRawBytes().observe(this, Observer { horizon.updateView(it) })
+
+    private fun observeFetchingChronometerData() =
+        viewModel.fetchChronometerData().observe(this, Observer {
+            tv_chronometer.text = getTimeInFormatWithSeconds(it)
+            totalTime = it
+        })
+
+    private fun initRecycler() {
+        rv_marks.layoutManager = LinearLayoutManager(activity)
+        rv_marks.adapter = adapter
     }
 }
