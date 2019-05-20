@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Lecture
+import com.itis2019.lecturerecorder.entities.Lecture
+import com.itis2019.lecturerecorder.utils.getTimeInFormatWithSeconds
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_lecture.*
+import java.lang.Exception
 import java.text.DateFormat
 
 class LectureAdapter(private val listener: (Lecture) -> Unit) : ListAdapter<Lecture, LectureAdapter.LectureHolder>(DIFF_CALLBACK) {
@@ -36,7 +38,9 @@ class LectureAdapter(private val listener: (Lecture) -> Unit) : ListAdapter<Lect
         fun bind(item: Lecture) =
             with(item) {
                 val context = containerView.context
-                card_view.background = context.getDrawable(folderBackground)
+               try {
+                   card_view.background = context.getDrawable(folderBackground)
+               } catch (ex:Exception) { }
                 val date = DateFormat.getDateInstance().format(creationDate)
 
                 val getFromHtml = { stringId: Int, string: String ->
@@ -45,7 +49,7 @@ class LectureAdapter(private val listener: (Lecture) -> Unit) : ListAdapter<Lect
                 tv_lecture_name.text = getFromHtml(R.string.lecture_topic, name)
                 tv_subject.text = getFromHtml(R.string.subject, folderName)
                 tv_date.text = getFromHtml(R.string.date, date)
-                tv_duration.text = getFromHtml(R.string.duration, "1 hour 15 minutes")
+                tv_duration.text = getFromHtml(R.string.duration, getTimeInFormatWithSeconds(duration))
             }
     }
 

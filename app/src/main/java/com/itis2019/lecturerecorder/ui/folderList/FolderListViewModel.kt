@@ -2,7 +2,7 @@ package com.itis2019.lecturerecorder.ui.folderList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.repository.FolderRepository
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
@@ -12,16 +12,22 @@ class FolderListViewModel @Inject constructor(private val repository: FolderRepo
 
     private var folders = MutableLiveData<List<Folder>>()
     private val folderCreationDialog = SingleLiveEvent<Any>()
+    private val folderItemClicked = SingleLiveEvent<Folder>()
 
     val showFolderCreationDialog: LiveData<Any?>
         get() = folderCreationDialog
 
+    val navigateToFolderInfo: LiveData<Folder?>
+        get() = folderItemClicked
+
     fun plusButtonClicked() = folderCreationDialog.call()
+
+    fun folderItemClicked(folder: Folder) { folderItemClicked.value = folder}
 
     fun onLoadFolders(): LiveData<List<Folder>> {
         disposables.add(repository.getAllFolders()
             .doOnSubscribe { loadingData.setValue(true) }
-            .doOnNext { loadingData.setValue(false) }
+            .doAfterNext { loadingData.setValue(false) }
             .subscribe(
                 { folders.value = it },
                 { errorData.value = it }

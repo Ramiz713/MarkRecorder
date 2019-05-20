@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.repository.dbEntities.DbFolder
 import io.reactivex.Flowable
 import io.reactivex.Single
 
@@ -12,14 +12,14 @@ import io.reactivex.Single
 interface FolderDao {
 
     @Query("SELECT * FROM folder_data ORDER BY creationDate DESC")
-    fun getAll(): Flowable<List<Folder>>
+    fun getAll(): Flowable<List<DbFolder>>
 
     @Query("SELECT * FROM folder_data WHERE id = :id")
-    fun getById(id: Int): Single<Folder>
+    fun getById(id: Long): Single<DbFolder>
 
     @Insert
-    fun insert(folder: Folder)
+    fun insert(folder: DbFolder) : Long
 
     @Delete
-    fun delete(folder: Folder)
+    fun delete(folder: DbFolder)
 }

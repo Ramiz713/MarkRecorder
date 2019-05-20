@@ -12,14 +12,23 @@
         tools:layout="@layout/fragment_lecture_list">
         <action
             android:id="@+id/action_navigation_lectures_to_recorderActivity"
-            app:destination="@id/recorderActivity" />
+            app:destination="@+id/recorderActivity" />
+        <action android:id="@+id/action_navigation_lectures_to_listeningActivity"
+                app:destination="@id/listeningActivity"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_folders"
         android:name="com.itis2019.lecturerecorder.ui.folderList.FolderListFragment"
         android:label="fragment_folder_list"
-        tools:layout="@layout/fragment_folder_list" />
+        tools:layout="@layout/fragment_folder_list" >
+        <action
+            android:id="@+id/action_navigation_folders_to_folderInfoActivity"
+            app:destination="@id/folderInfoActivity" />
+        <action
+            android:id="@+id/action_navigation_folders_to_listeningActivity"
+            app:destination="@id/listeningActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_settings"
@@ -31,5 +40,21 @@
         android:name="com.itis2019.lecturerecorder.ui.recorder.RecorderActivity"
         android:label="activity_recorder"
         tools:layout="@layout/activity_recorder" />
+    <activity android:id="@+id/listeningActivity"
+              android:name="com.itis2019.lecturerecorder.ui.listener.ListeningActivity"
+              android:label="activity_listening" tools:layout="@layout/activity_listening">
+        <argument
+            android:name="lecture"
+            app:argType="com.itis2019.lecturerecorder.entities.Lecture" />
+    </activity>
+    <activity
+        android:id="@+id/folderInfoActivity"
+        android:name="com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoActivity"
+        android:label="content_folder_info"
+        tools:layout="@layout/content_folder_info" >
+        <argument
+            android:name="folder"
+            app:argType="com.itis2019.lecturerecorder.entities.Folder" />
+    </activity>
 
 </navigation>

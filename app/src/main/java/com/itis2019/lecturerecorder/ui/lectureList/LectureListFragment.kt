@@ -1,6 +1,6 @@
 package com.itis2019.lecturerecorder.ui.lectureList
 
-import android.content.res.Configuration
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,22 +8,20 @@ import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
-import com.itis2019.lecturerecorder.model.Lecture
+import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.ui.adapters.LectureAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_lecture_list.*
 
 class LectureListFragment : BaseFragment(), FragmentInjectable {
 
     override lateinit var viewModel: LectureListViewModel
-
-    private val adapter = LectureAdapter { lecture: Lecture -> }
 
     override fun initViewModel() {
         AndroidSupportInjection.inject(this)
@@ -38,12 +36,21 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        extended_button.setOnClickListener { viewModel.lectureRecordButtonClicked() }
+
+        extended_button.setOnClickListener {
+            runWithPermissions(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+            ) {
+                viewModel.lectureRecordButtonClicked()
+            }
+        }
     }
 
     override fun initObservers(view: View) {
         observeLectureList()
         observeNavigateToRecorder()
+        observeNavigateToListening()
         observeLoading(progress_bar)
         observeError(view)
     }
@@ -53,18 +60,22 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
             findNavController(this).navigate(R.id.action_navigation_lectures_to_recorderActivity)
         })
 
+    private fun observeNavigateToListening() =
+        viewModel.navigateToListening.observe(this, Observer { lecture ->
+            lecture?.let {
+                val action = LectureListFragmentDirections.actionNavigationLecturesToListeningActivity(lecture)
+                findNavController(this).navigate(action)
+            }
+        })
+
     private fun observeLectureList() =
         viewModel.onLoadLectures().observe(this, Observer {
-            if (it.isEmpty())
-                adapter.submitList(it)
+            (rv_lectures.adapter as LectureAdapter).submitList(it)
         })
 
     private fun initRecycler() {
-        val manager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            GridLayoutManager(activity, 2)
-        else LinearLayoutManager(activity)
-
-        rv_lectures.adapter = adapter
+        val manager = LinearLayoutManager(activity)
+        rv_lectures.adapter = LectureAdapter { lecture: Lecture -> viewModel.lectureItemClicked(lecture)}
         rv_lectures.layoutManager = manager
         rv_lectures.isNestedScrollingEnabled = false
         nested_scroll_view.isNestedScrollingEnabled = true

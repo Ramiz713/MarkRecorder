@@ -1,14 +1,14 @@
 package com.itis2019.lecturerecorder.ui.folderList
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.ui.adapters.FolderAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -18,8 +18,6 @@ import kotlinx.android.synthetic.main.fragment_folder_list.*
 class FolderListFragment : BaseFragment() {
 
     override lateinit var viewModel: FolderListViewModel
-
-    private val adapter = FolderAdapter { folder: Folder -> }
 
     override fun initViewModel() {
         AndroidSupportInjection.inject(this)
@@ -38,10 +36,11 @@ class FolderListFragment : BaseFragment() {
     }
 
     override fun initObservers(view: View) {
-        observeFolderList()
         observeError(view)
         observeLoading(progress_bar)
+        observeFolderList()
         observeFolderCreation()
+        observeNavigateFolderInfo()
     }
 
     private fun observeFolderCreation() =
@@ -53,15 +52,20 @@ class FolderListFragment : BaseFragment() {
 
     private fun observeFolderList() =
         viewModel.onLoadFolders().observe(this, Observer {
-            adapter.submitList(it)
+            (rv_folders.adapter as FolderAdapter).submitList(it)
+        })
+
+    private fun observeNavigateFolderInfo() =
+        viewModel.navigateToFolderInfo.observe(this, Observer {folder ->
+           folder?.let {
+               val action = FolderListFragmentDirections.actionNavigationFoldersToFolderInfoActivity(it)
+               findNavController(this).navigate(action)
+           }
         })
 
     private fun initRecycler() {
-        val manager = if (activity?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            GridLayoutManager(activity, 3)
-        else GridLayoutManager(activity, 2)
-        rv_folders.adapter = adapter
-        rv_folders.layoutManager = manager
+        rv_folders.adapter = FolderAdapter { folder: Folder -> viewModel.folderItemClicked(folder) }
+        rv_folders.layoutManager = GridLayoutManager(activity, 2)
         rv_folders.isNestedScrollingEnabled = false
     }
 }

@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.model.Folder
+import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
 import dagger.android.support.AndroidSupportInjection
 import java.util.Calendar
@@ -25,7 +25,7 @@ class FolderCreationDialog : DialogFragment() {
         AndroidSupportInjection.inject(this)
         viewModel = (parentFragment as Fragment).injectViewModel(viewModelFactory)
 
-        val builder = AlertDialog.Builder(activity, R.style.DialogTheme)
+        val builder = AlertDialog.Builder(activity)
         val inflater = activity?.layoutInflater
         val view = inflater?.inflate(R.layout.folder_creation_dialog, null)
         val dialog = builder.setView(view)

@@ -2,8 +2,10 @@ package com.itis2019.lecturerecorder.di.module
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoViewModel
 import com.itis2019.lecturerecorder.ui.folderList.FolderListViewModel
 import com.itis2019.lecturerecorder.ui.lectureList.LectureListViewModel
+import com.itis2019.lecturerecorder.ui.listener.ListeningViewModel
 import com.itis2019.lecturerecorder.ui.recorder.lectureConfig.LectureConfigViewModel
 import com.itis2019.lecturerecorder.ui.recorder.recording.RecordingViewModel
 import com.itis2019.lecturerecorder.utils.dagger.ViewModelKey
@@ -39,4 +41,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LectureConfigViewModel::class)
     internal abstract fun lectureConfigViewModel(viewModel: LectureConfigViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ListeningViewModel::class)
+    internal abstract fun lectureListeningViewModel(viewModel: ListeningViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FolderInfoViewModel::class)
+    internal abstract fun lectureFolderInfoViewModel(viewModel: FolderInfoViewModel): ViewModel
 }

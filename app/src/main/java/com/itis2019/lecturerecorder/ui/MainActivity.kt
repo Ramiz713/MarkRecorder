@@ -13,6 +13,7 @@ class MainActivity : DiActivity() {
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.LightTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

@@ -12,11 +12,25 @@
         tools:layout="@layout/recording_fragment">
         <action
             android:id="@+id/action_recordingFragment_to_lectureConfigFragment"
-            app:destination="@id/lectureConfigFragment" />
+            app:destination="@id/lectureConfigFragment"
+            app:popUpTo="@+id/lectureConfigFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/lectureConfigFragment"
         android:name="com.itis2019.lecturerecorder.ui.recorder.lectureConfig.LectureConfigFragment"
         android:label="lecture_config_fragment"
-        tools:layout="@layout/lecture_config_fragment" />
+        tools:layout="@layout/lecture_config_fragment">
+        <argument
+            android:name="lecture"
+            app:argType="com.itis2019.lecturerecorder.entities.Lecture" />
+        <action
+            android:id="@+id/action_lectureConfigFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.itis2019.lecturerecorder.ui.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
 </navigation>

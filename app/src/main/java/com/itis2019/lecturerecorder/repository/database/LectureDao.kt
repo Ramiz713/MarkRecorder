@@ -1,10 +1,7 @@
 package com.itis2019.lecturerecorder.repository.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import com.itis2019.lecturerecorder.model.Lecture
+import androidx.room.*
+import com.itis2019.lecturerecorder.repository.dbEntities.DbLecture
 import io.reactivex.Flowable
 import io.reactivex.Single
 
@@ -12,14 +9,20 @@ import io.reactivex.Single
 interface LectureDao {
 
     @Query("SELECT * FROM lecture_data ORDER BY creationDate DESC")
-    fun getAll(): Flowable<List<Lecture>>
+    fun getAll(): Flowable<List<DbLecture>>
+
+    @Query("SELECT * FROM lecture_data WHERE folderId = :folderId ORDER BY creationDate DESC ")
+    fun getLectures(folderId: Long): Flowable<List<DbLecture>>
 
     @Query("SELECT * FROM lecture_data WHERE id = :id")
-    fun getById(id: Int): Single<Lecture>
+    fun getById(id: Long): Single<DbLecture>
+
+    @Update
+    fun updateLecture(lecture: DbLecture)
 
     @Insert
-    fun insert(lecture: Lecture)
+    fun insert(lecture: DbLecture): Long
 
     @Delete
-    fun delete(lecture: Lecture)
+    fun delete(lecture: DbLecture)
 }

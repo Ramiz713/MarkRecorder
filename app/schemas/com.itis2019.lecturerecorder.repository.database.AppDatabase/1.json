@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "459d56fe22ebd959415ebde3cbf45a31",
+    "identityHash": "af66334e4904d53c122e76a3ae77dde5",
     "entities": [
       {
         "tableName": "lecture_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `folderName` TEXT NOT NULL, `folderBackground` INTEGER NOT NULL, `folderId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `filePath` TEXT NOT NULL, `folderName` TEXT NOT NULL, `folderBackground` INTEGER NOT NULL, `folderId` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -30,6 +30,12 @@
             "fieldPath": "creationDate",
             "columnName": "creationDate",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filePath",
+            "columnName": "filePath",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -140,7 +146,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"459d56fe22ebd959415ebde3cbf45a31\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"af66334e4904d53c122e76a3ae77dde5\")"
     ]
   }
 }

@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 28
@@ -32,9 +33,10 @@ androidExtensions {
 
 ext {
     dagger = '2.21'
-    nav_version = "2.1.0-alpha02"
+    nav_version = "2.1.0-alpha03"
     archLifecycleVersion = "1.1.1"
     glide = "4.9.0"
+    kotlinCoroutineVersion = "1.2.1"
     rxandroid = "2.1.0"
     rxkotlin = "2.3.0"
     retrofit = "2.5.0"
@@ -59,7 +61,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
     kapt "androidx.room:room-compiler:$room"
 
-    implementation "androidx.recyclerview:recyclerview:1.1.0-alpha04"
+    implementation "androidx.recyclerview:recyclerview:1.1.0-alpha05"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "androidx.preference:preference:1.0.0"
@@ -69,8 +71,6 @@ dependencies {
 
     implementation "com.github.bumptech.glide:glide:$glide"
 
-    implementation 'com.tyorikan:voice-recording-visualizer:1.0.3@aar'
-
     implementation "com.google.dagger:dagger:$dagger"
     implementation "com.google.dagger:dagger-android-support:$dagger"
     kapt "com.google.dagger:dagger-compiler:$dagger"
@@ -79,8 +79,16 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:$archLifecycleVersion"
     implementation "android.arch.lifecycle:extensions:$archLifecycleVersion"
 
-    implementation "androidx.navigation:navigation-fragment:$nav_version"
-    implementation "androidx.navigation:navigation-ui:$nav_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    implementation 'com.github.ohoussein.playpauseview:playpauseview:1.0.2'
+
+    implementation 'com.github.quickpermissions:quickpermissions-kotlin:0.4.1'
+
+    implementation 'com.gauravk.audiovisualizer:audiovisualizer:0.9.2'
+
+    implementation 'com.yalantis:eqwaves:1.0.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0-beta01'
