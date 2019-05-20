@@ -8,9 +8,9 @@ import com.itis2019.lecturerecorder.utils.DateConverter
 @Entity(tableName = "mark_data")
 data class DbMark(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long,
     val name: String,
     @TypeConverters(DateConverter::class)
     val time: Long,
-    val lectureId: Int
+    val lectureId: Long
 )

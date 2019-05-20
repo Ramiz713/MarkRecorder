@@ -11,7 +11,7 @@ fun DbMark.convertToMark(): Mark =
         lectureId = this.lectureId
     )
 
-fun Mark.convertToMark(): DbMark =
+fun Mark.convertToDbMark(): DbMark =
     DbMark(
         id = this.id,
         name = this.name,

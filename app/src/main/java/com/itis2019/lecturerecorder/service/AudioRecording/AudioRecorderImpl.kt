@@ -1,4 +1,4 @@
-package com.itis2019.lecturerecorder.service
+package com.itis2019.lecturerecorder.service.AudioRecording
 
 import android.media.AudioFormat
 import android.media.AudioRecord
@@ -101,7 +101,9 @@ class AudioRecorderImpl : AudioRecorder {
 
         os = FileOutputStream(file)
         writeWavHeader(
-            os, CHANNEL, SAMPLE_RATE,
+            os,
+            CHANNEL,
+            SAMPLE_RATE,
             ENCODING
         )
     }

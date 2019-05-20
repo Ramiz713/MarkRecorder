@@ -9,7 +9,7 @@ import java.util.Date
 @Entity(tableName = "folder_data")
 data class DbFolder(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long,
     val name: String,
     @TypeConverters(DateConverter::class)
     val creationDate: Date,

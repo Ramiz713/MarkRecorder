@@ -12,11 +12,17 @@ class LectureListViewModel @Inject constructor(private val repository: LectureRe
 
     private var lectures = MutableLiveData<List<Lecture>>()
     private val lectureRecordBtnClicked = SingleLiveEvent<Any>()
+    private val lectureItemClicked = SingleLiveEvent<Lecture>()
 
     val navigateToRecorder: LiveData<Any?>
         get() = lectureRecordBtnClicked
 
+    val navigateToListening: LiveData<Lecture?>
+        get() = lectureItemClicked
+
     fun lectureRecordButtonClicked() = lectureRecordBtnClicked.call()
+
+    fun lectureItemClicked(lecture: Lecture) { lectureItemClicked.value = lecture}
 
     fun onLoadLectures(): LiveData<List<Lecture>> {
         disposables.add(repository.getAllLectures()

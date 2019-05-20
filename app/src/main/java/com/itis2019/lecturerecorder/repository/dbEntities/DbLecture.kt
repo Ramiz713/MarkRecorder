@@ -9,7 +9,7 @@ import java.util.Date
 @Entity(tableName = "lecture_data")
 data class DbLecture(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Long,
     val name: String,
     val duration: Long,
     @TypeConverters(DateConverter::class)
@@ -17,5 +17,5 @@ data class DbLecture(
     val filePath: String,
     val folderName: String,
     val folderBackground: Int,
-    val folderId: Int
+    val folderId: Long
 )

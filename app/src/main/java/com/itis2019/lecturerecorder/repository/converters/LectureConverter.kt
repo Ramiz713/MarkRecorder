@@ -3,7 +3,7 @@ package com.itis2019.lecturerecorder.repository.converters
 import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.repository.dbEntities.DbLecture
 
-fun DbLecture.convertToDbLecture(): Lecture =
+fun DbLecture.convertToLecture(): Lecture =
     Lecture(
         id = this.id,
         name = this.name,
@@ -15,7 +15,7 @@ fun DbLecture.convertToDbLecture(): Lecture =
         filePath = this.filePath
     )
 
-fun Lecture.convertToLecture(): DbLecture =
+fun Lecture.convertToDbLecture(): DbLecture =
     DbLecture(
         id = this.id,
         name = this.name,

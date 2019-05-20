@@ -6,12 +6,12 @@ import java.util.Date
 
 @Parcelize
 data class Lecture(
-    val id: Int,
-    val name: String,
-    val duration: Long,
-    val creationDate: Date,
-    val filePath: String,
-    val folderName: String,
-    val folderBackground: Int,
-    val folderId: Int
+    val id: Long = 0,
+    val name: String = "",
+    val duration: Long = 0,
+    val creationDate: Date = Date(0),
+    val filePath: String = "",
+    val folderName: String = "",
+    val folderBackground: Int = 0,
+    val folderId: Long = 0
 ) : Parcelable

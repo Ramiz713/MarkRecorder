@@ -9,7 +9,9 @@ interface LectureRepository {
 
     fun getAllLectures(): Flowable<List<Lecture>>
 
-    fun getLecture(id: Int): Single<Lecture>
+    fun getLectures(folderId: Long): Flowable<List<Lecture>>
+
+    fun getLecture(id: Long): Single<Lecture>
 
     fun updateLecture(lecture: Lecture): Observable<Unit>
 

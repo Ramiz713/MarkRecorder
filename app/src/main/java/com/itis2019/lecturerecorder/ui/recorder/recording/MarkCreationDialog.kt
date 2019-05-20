@@ -17,11 +17,13 @@ class MarkCreationDialog : DialogFragment() {
 
     companion object {
         private const val EXTRA_TIME = "time"
+        private const val EXTRA_LECTURE_ID = "lectureId"
 
-        fun newInstance(time: Long): MarkCreationDialog {
+        fun newInstance(time: Long, lectureId: Long): MarkCreationDialog {
             val dialog = MarkCreationDialog()
             val args = Bundle().apply {
                 putLong(EXTRA_TIME, time)
+                putLong(EXTRA_LECTURE_ID, lectureId)
             }
             dialog.arguments = args
             return dialog
@@ -50,8 +52,11 @@ class MarkCreationDialog : DialogFragment() {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val textInput = view?.findViewById<TextInputEditText>(R.id.ti_mark_name)
                 val name = textInput?.text.toString()
+                val lectureId = arguments?.getLong(EXTRA_LECTURE_ID) ?: 0
+                val time = arguments?.getLong(EXTRA_TIME)?: 0
+
                 if (name.isNotEmpty()) {
-                    viewModel.addMark(Mark(0, name, arguments?.getLong(EXTRA_TIME) ?: 0, 0))
+                    viewModel.insertMark(Mark(0, name, time, lectureId))
                     dismiss()
                 } else textInput?.error = getString(R.string.is_not_valid)
             }

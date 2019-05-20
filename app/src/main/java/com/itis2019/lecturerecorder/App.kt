@@ -17,7 +17,8 @@ class App : Application(), HasActivityInjector {
     companion object {
         const val RECORDING_CHANNEL_ID = "recordingServiceChannel"
         const val RECORDING_CHANNEL_NAME = "Recording Service Channel"
-        val PLAYING_CHANNEL_ID = "playingServiceChannel"
+        const val PLAYING_CHANNEL_ID = "playingServiceChannel"
+        const val PLAYING_CHANNEL_NAME = "Playing Service Channel"
     }
 
     @Inject
@@ -39,8 +40,14 @@ class App : Application(), HasActivityInjector {
                 RECORDING_CHANNEL_ID,
                 RECORDING_CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_DEFAULT)
+
+            val playerServiceChannel = NotificationChannel(
+                PLAYING_CHANNEL_ID,
+                PLAYING_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(recordingServiceChannel)
+            manager.createNotificationChannel(playerServiceChannel)
         }
     }
 

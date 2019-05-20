@@ -11,11 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.entities.Mark
-import com.itis2019.lecturerecorder.service.AudioRecordService
+import com.itis2019.lecturerecorder.service.AudioRecording.AudioRecordService
 import com.itis2019.lecturerecorder.ui.adapters.MarkAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -31,7 +31,7 @@ class RecordingFragment : BaseFragment() {
     private var bound: Boolean = false
     private var isInitialState = true
     private var totalTime: Long = 0
-    private val adapter = MarkAdapter { }
+    private var lectureId: Long = 0
 
     private val connection = object : ServiceConnection {
 
@@ -85,6 +85,7 @@ class RecordingFragment : BaseFragment() {
     override fun initObservers(view: View) {
         observeIsPlaying()
         observeNavigateToLectureConfig()
+        observeInsertLecture()
         observeMarkCreation()
         observeMarkList()
         btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked(btn_play_pause.isPlay) }
@@ -111,7 +112,6 @@ class RecordingFragment : BaseFragment() {
     private fun initFlowableData() {
         viewModel.setDataSource(service.getRawBytes(), service.getTime())
         activity?.startService(Intent(activity, AudioRecordService::class.java))
-        viewModel.fetchMarks().value?.size
         observeFetchingRawBytesData()
         observeFetchingChronometerData()
     }
@@ -123,23 +123,30 @@ class RecordingFragment : BaseFragment() {
                 unbindService(connection)
                 stopService(Intent(activity, AudioRecordService::class.java))
             }
-            val lecture = Lecture(0, "", totalTime, Calendar.getInstance().time, path, "", 0, 0)
-            val action = RecordingFragmentDirections
-                .actionRecordingFragmentToLectureConfigFragment(lecture, adapter.currentList.toTypedArray())
+            val lecture = Lecture(
+                id = lectureId,
+                duration = totalTime,
+                creationDate = Calendar.getInstance().time,
+                filePath = path)
+            val action = RecordingFragmentDirections.actionRecordingFragmentToLectureConfigFragment(lecture)
             findNavController(this).navigate(action)
         })
+
+    private fun observeInsertLecture() {
+        viewModel.insertLecture().observe(this, Observer { lectureId = it })
+    }
 
     private fun observeMarkCreation() =
         viewModel.showMarkCreationDialog.observe(this, Observer {
             fragmentManager?.let {
-                MarkCreationDialog.newInstance(totalTime).show(it, "MarkCreationDialog")
+                MarkCreationDialog.newInstance(totalTime, lectureId).show(it, "MarkCreationDialog")
             }
         })
 
     private fun observeMarkList() =
         viewModel.fetchMarks().observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
-        })
+            (rv_marks.adapter as MarkAdapter).submitList(it) }
+        )
 
     private fun observeFetchingRawBytesData() =
         viewModel.fetchRawBytes().observe(this, Observer { horizon.updateView(it) })
@@ -152,6 +159,8 @@ class RecordingFragment : BaseFragment() {
 
     private fun initRecycler() {
         rv_marks.layoutManager = LinearLayoutManager(activity)
-        rv_marks.adapter = adapter
+        rv_marks.adapter = MarkAdapter {}
+        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+        rv_marks.addItemDecoration(itemDecoration)
     }
 }

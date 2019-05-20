@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.itis2019.lecturerecorder">
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".App"
@@ -15,7 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/LightTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name=".ui.folderInfo.FolderInfoActivity"
+            android:label="@string/title_activity_folder_info"
+            android:theme="@style/LightTheme.NoActionBar"></activity>
+        <activity android:name=".ui.listener.ListeningActivity" />
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
@@ -26,13 +30,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.recorder.RecorderActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
-        <service android:name=".service.AudioRecordService" />
+        <service android:name=".service.AudioRecording.AudioRecordService" />
+        <service android:name=".service.AudioPlayer.AudioPlayerService" />
     </application>
 
 </manifest>

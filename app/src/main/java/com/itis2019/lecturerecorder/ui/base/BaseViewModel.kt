@@ -15,5 +15,8 @@ abstract class BaseViewModel : ViewModel() {
 
     fun error(): LiveData<Throwable> = errorData
 
-    override fun onCleared() = disposables.clear()
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
+    }
 }

@@ -11,8 +11,11 @@ interface LectureDao {
     @Query("SELECT * FROM lecture_data ORDER BY creationDate DESC")
     fun getAll(): Flowable<List<DbLecture>>
 
+    @Query("SELECT * FROM lecture_data WHERE folderId = :folderId ORDER BY creationDate DESC ")
+    fun getLectures(folderId: Long): Flowable<List<DbLecture>>
+
     @Query("SELECT * FROM lecture_data WHERE id = :id")
-    fun getById(id: Int): Single<DbLecture>
+    fun getById(id: Long): Single<DbLecture>
 
     @Update
     fun updateLecture(lecture: DbLecture)

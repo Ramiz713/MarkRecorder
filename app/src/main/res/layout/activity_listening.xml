@@ -4,27 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.recorder.recording.RecordingFragment">
-
-    <android.opengl.GLSurfaceView
-        android:id="@+id/visualizer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/tv_chronometer"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_chronometer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/roboto_light"
-        android:text="@string/chronometer"
-        android:textSize="48sp"
-        app:layout_constraintBottom_toTopOf="@id/line_center"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/visualizer" />
+    tools:context=".ui.listener.ListeningActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_center"
@@ -50,31 +30,25 @@
         android:id="@+id/rv_marks"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="28dp"
+        android:layout_marginTop="8dp"
         android:layout_marginRight="28dp"
+        android:layout_marginBottom="28dp"
         app:layout_constraintBottom_toTopOf="@id/line_bottom"
         app:layout_constraintTop_toBottomOf="@id/tv_mark_title"
         app:layout_constraintVertical_bias="0">
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_mark"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/seek_bar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/gradient_red"
-        android:src="@drawable/ic_flag_black_24dp"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintBottom_toTopOf="@id/line_bottom"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/btn_play_pause"
-        app:layout_constraintTop_toTopOf="@id/line_bottom"
-        app:maxImageSize="30dp"
-        app:tint="@android:color/white" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_marks"
+        app:layout_constraintVertical_bias="0.45" />
 
     <com.ohoussein.playpause.PlayPauseView
         android:id="@+id/btn_play_pause"
@@ -89,27 +63,11 @@
         app:fill_color="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintLeft_toRightOf="@id/btn_mark"
-        app:layout_constraintRight_toLeftOf="@id/btn_stop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/line_bottom"
         app:pause_bg="@color/colorPrimary"
         app:play_bg="@color/colorPrimary" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_stop_white_24dp"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintLeft_toRightOf="@id/btn_play_pause"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/line_bottom"
-        app:maxImageSize="30dp"
-        app:tint="@android:color/white" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_bottom"
@@ -117,5 +75,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.85" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

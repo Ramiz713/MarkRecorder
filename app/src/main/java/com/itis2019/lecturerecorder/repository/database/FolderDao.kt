@@ -15,10 +15,10 @@ interface FolderDao {
     fun getAll(): Flowable<List<DbFolder>>
 
     @Query("SELECT * FROM folder_data WHERE id = :id")
-    fun getById(id: Int): Single<DbFolder>
+    fun getById(id: Long): Single<DbFolder>
 
     @Insert
-    fun insert(folder: DbFolder)
+    fun insert(folder: DbFolder) : Long
 
     @Delete
     fun delete(folder: DbFolder)

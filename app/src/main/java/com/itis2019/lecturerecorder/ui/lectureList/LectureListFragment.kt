@@ -23,8 +23,6 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
 
     override lateinit var viewModel: LectureListViewModel
 
-    private val adapter = LectureAdapter { lecture: Lecture -> }
-
     override fun initViewModel() {
         AndroidSupportInjection.inject(this)
         viewModel = injectViewModel(viewModelFactory)
@@ -52,6 +50,7 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     override fun initObservers(view: View) {
         observeLectureList()
         observeNavigateToRecorder()
+        observeNavigateToListening()
         observeLoading(progress_bar)
         observeError(view)
     }
@@ -61,14 +60,22 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
             findNavController(this).navigate(R.id.action_navigation_lectures_to_recorderActivity)
         })
 
+    private fun observeNavigateToListening() =
+        viewModel.navigateToListening.observe(this, Observer { lecture ->
+            lecture?.let {
+                val action = LectureListFragmentDirections.actionNavigationLecturesToListeningActivity(lecture)
+                findNavController(this).navigate(action)
+            }
+        })
+
     private fun observeLectureList() =
         viewModel.onLoadLectures().observe(this, Observer {
-            adapter.submitList(it)
+            (rv_lectures.adapter as LectureAdapter).submitList(it)
         })
 
     private fun initRecycler() {
         val manager = LinearLayoutManager(activity)
-        rv_lectures.adapter = adapter
+        rv_lectures.adapter = LectureAdapter { lecture: Lecture -> viewModel.lectureItemClicked(lecture)}
         rv_lectures.layoutManager = manager
         rv_lectures.isNestedScrollingEnabled = false
         nested_scroll_view.isNestedScrollingEnabled = true

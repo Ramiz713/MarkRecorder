@@ -12,11 +12,17 @@ class FolderListViewModel @Inject constructor(private val repository: FolderRepo
 
     private var folders = MutableLiveData<List<Folder>>()
     private val folderCreationDialog = SingleLiveEvent<Any>()
+    private val folderItemClicked = SingleLiveEvent<Folder>()
 
     val showFolderCreationDialog: LiveData<Any?>
         get() = folderCreationDialog
 
+    val navigateToFolderInfo: LiveData<Folder?>
+        get() = folderItemClicked
+
     fun plusButtonClicked() = folderCreationDialog.call()
+
+    fun folderItemClicked(folder: Folder) { folderItemClicked.value = folder}
 
     fun onLoadFolders(): LiveData<List<Folder>> {
         disposables.add(repository.getAllFolders()

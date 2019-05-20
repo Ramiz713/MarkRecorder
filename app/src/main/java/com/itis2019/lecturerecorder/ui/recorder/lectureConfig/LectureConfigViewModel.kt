@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.entities.Mark
 import com.itis2019.lecturerecorder.repository.FolderRepository
 import com.itis2019.lecturerecorder.repository.LectureRepository
 import com.itis2019.lecturerecorder.repository.MarkRepository
@@ -22,6 +21,7 @@ class LectureConfigViewModel @Inject constructor(
     private val cancelBtnClickedData = SingleLiveEvent<Any>()
     private val chooseFolderBtnClickedData = SingleLiveEvent<Any>()
     private val folders = MutableLiveData<List<Folder>>()
+    private var selectedFolder = MutableLiveData<Pair<String, Int>>()
 
     fun confirmBtnClicked() = confirmBtnClickedData.call()
 
@@ -38,13 +38,43 @@ class LectureConfigViewModel @Inject constructor(
     val showFolderChoosingDialog: LiveData<Any?>
         get() = chooseFolderBtnClickedData
 
-    fun confirmBtnClicked(lecture: Lecture, marks: List<Mark>) {
-        disposables.add(lectureRepository.insertLecture(lecture).subscribe(
-            {},
-            { errorData.value = it })
-        )
+    fun confirmBtnClicked(lecture: Lecture, folder: Folder) {
+        if (folder.id == 0L)
+            disposables.add(folderRepository.insertFolder(folder)
+                .subscribe(
+                    { insertLecture(lecture.copy(folderId = it)) },
+                    { errorData.value = it }
+                ))
+        else insertLecture(lecture)
         confirmBtnClickedData.call()
     }
+
+    private fun insertLecture(lecture: Lecture) {
+        disposables.add(
+            lectureRepository
+                .updateLecture(lecture)
+                .subscribe(
+                    {},
+                    { errorData.value = it })
+        )
+    }
+
+    fun deleteLectureAndMarks(lecture: Lecture) {
+        disposables.add(
+            markRepository.deleteAllLectureBindedMarks(lecture.id)
+                .subscribe(
+                    { deleteLecture(lecture) },
+                    { errorData.value = it })
+        )
+    }
+
+    private fun deleteLecture(lecture: Lecture) =
+        disposables.add(
+            lectureRepository.deleteLecture(lecture)
+                .subscribe(
+                    {},
+                    { errorData.value = it })
+        )
 
     fun onLoadFolders(): LiveData<List<Folder>> {
         disposables.add(folderRepository
@@ -55,5 +85,13 @@ class LectureConfigViewModel @Inject constructor(
             )
         )
         return folders
+    }
+
+    fun fetchselectedFolder(): LiveData<Pair<String, Int>> {
+        return selectedFolder
+    }
+
+    fun setSelectedFolder(value: Pair<String, Int>) {
+        selectedFolder.value = value
     }
 }

@@ -15,27 +15,31 @@ class LectureRepositoryImpl(private val lectureDao: LectureDao) : LectureReposit
 
     override fun getAllLectures(): Flowable<List<Lecture>> =
         lectureDao.getAll()
-            .map { list -> list.map { it.convertToDbLecture() } }
+            .map { list -> list.map { it.convertToLecture() } }
             .observeOn(AndroidSchedulers.mainThread())
 
-    override fun getLecture(id: Int): Single<Lecture> =
+    override fun getLectures(folderId: Long): Flowable<List<Lecture>> =
+        lectureDao.getLectures(folderId)
+            .map { list -> list.map { it.convertToLecture() } }
+            .observeOn(AndroidSchedulers.mainThread())
+
+    override fun getLecture(id: Long): Single<Lecture> =
         lectureDao.getById(id)
-            .map { it.convertToDbLecture() }
+            .map { it.convertToLecture() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
     override fun updateLecture(lecture: Lecture): Observable<Unit> =
-        Observable.fromCallable { lectureDao.updateLecture(lecture.convertToLecture()) }
+        Observable.fromCallable { lectureDao.updateLecture(lecture.convertToDbLecture()) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
     override fun insertLecture(lecture: Lecture): Observable<Long> =
-        Observable.fromCallable { lectureDao.insert(lecture.convertToLecture()) }
+        Observable.fromCallable { lectureDao.insert(lecture.convertToDbLecture()) }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
     override fun deleteLecture(lecture: Lecture): Observable<Unit> =
-        Observable.fromCallable { lectureDao.delete(lecture.convertToLecture()) }
+        Observable.fromCallable { lectureDao.delete(lecture.convertToDbLecture()) }
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 }

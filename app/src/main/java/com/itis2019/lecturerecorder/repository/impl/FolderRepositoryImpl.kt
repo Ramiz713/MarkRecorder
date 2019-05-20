@@ -18,13 +18,13 @@ class FolderRepositoryImpl(private val folderDao: FolderDao) : FolderRepository 
             .map { list -> list.map { it.convertToFolder() } }
             .observeOn(AndroidSchedulers.mainThread())
 
-    override fun getFolder(id: Int): Single<Folder> =
+    override fun getFolder(id: Long): Single<Folder> =
         folderDao.getById(id)
             .map { it.convertToFolder() }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
-    override fun insertFolder(folder: Folder): Observable<Unit> =
+    override fun insertFolder(folder: Folder): Observable<Long> =
         Observable.fromCallable { folderDao.insert(folder.convertToDbFolder()) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())

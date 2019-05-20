@@ -13,7 +13,6 @@
         <action
             android:id="@+id/action_recordingFragment_to_lectureConfigFragment"
             app:destination="@id/lectureConfigFragment"
-            app:launchSingleTop="true"
             app:popUpTo="@+id/lectureConfigFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -28,9 +27,6 @@
         <action
             android:id="@+id/action_lectureConfigFragment_to_mainActivity"
             app:destination="@id/mainActivity" />
-        <argument
-            android:name="marks"
-            app:argType="com.itis2019.lecturerecorder.entities.Mark[]" />
     </fragment>
     <activity
         android:id="@+id/mainActivity"

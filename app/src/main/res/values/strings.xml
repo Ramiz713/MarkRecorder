@@ -19,6 +19,7 @@
         save recorded audio
     </string>
     <string name="info_lecture_configuration">Your lecture is recorded, you can configure lecture settings. If you don\'t choose any folder, default folder will be selected</string>
+    <string name="none_folder">"None(create folder)"</string>
 
     <string name="ok">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
@@ -34,5 +35,6 @@
     <string name="create_mark">Mark creation</string>
     <string name="choose_folder">Choose folder</string>
     <string name="subject_name">Subject name</string>
+    <string name="title_activity_folder_info">FolderInfoActivity</string>
 
 </resources>
