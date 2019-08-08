@@ -2,17 +2,17 @@ package com.itis2019.lecturerecorder.repository.database
 
 import androidx.room.*
 import com.itis2019.lecturerecorder.repository.dbEntities.DbLecture
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao
 interface LectureDao {
 
     @Query("SELECT * FROM lecture_data ORDER BY creationDate DESC")
-    fun getAll(): Flowable<List<DbLecture>>
+    fun getAll(): Observable<List<DbLecture>>
 
     @Query("SELECT * FROM lecture_data WHERE folderId = :folderId ORDER BY creationDate DESC ")
-    fun getLectures(folderId: Long): Flowable<List<DbLecture>>
+    fun getLectures(folderId: Long): Observable<List<DbLecture>>
 
     @Query("SELECT * FROM lecture_data WHERE id = :id")
     fun getById(id: Long): Single<DbLecture>

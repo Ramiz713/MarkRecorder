@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -14,6 +13,7 @@ import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.getRandomGradientColor
 import com.itis2019.lecturerecorder.utils.validateEditText
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.lecture_config_fragment.*
@@ -37,11 +37,6 @@ class LectureConfigFragment : BaseFragment() {
         viewModel = injectViewModel(viewModelFactory)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,7 +44,7 @@ class LectureConfigFragment : BaseFragment() {
         return inflater.inflate(R.layout.lecture_config_fragment, container, false)
     }
 
-    override fun initObservers(view: View) {
+    override fun initObservers() {
         observeOnLoadFolders()
 //        observeSelectedFolder()
         observeNavigateBackWithSaving()
@@ -70,13 +65,12 @@ class LectureConfigFragment : BaseFragment() {
 
     private fun observeNavigateBackWithoutSaving() =
         viewModel.navigateBackWithoutSaving.observe(this, Observer {
-            viewModel.deleteLectureAndMarks(args.lecture)
-            findNavController(this).navigate(R.id.action_lectureConfigFragment_to_mainActivity)
+            findNavController(this).navigate(R.id.action_lectureConfigFragment_to_navigation_lectures)
         })
 
     private fun observeNavigateBackWithSaving() =
         viewModel.navigateBackWithSaving.observe(this, Observer {
-            findNavController(this).navigate(R.id.action_lectureConfigFragment_to_mainActivity)
+            findNavController(this).navigate(R.id.action_lectureConfigFragment_to_navigation_lectures)
         })
 
     private fun observeOnLoadFolders() =
@@ -105,11 +99,11 @@ class LectureConfigFragment : BaseFragment() {
             id = 0,
             name = folderName,
             creationDate = Calendar.getInstance().time,
-            background = R.drawable.gradient_yellow
+            background = getRandomGradientColor()
         )
         val newLecture = with(lecture) {
             Lecture(
-                id, lectureName, duration, creationDate, filePath, folderName,
+                id, lectureName, lecture.marks, duration, creationDate, filePath, folderName,
                 folder.background, folder.id
             )
         }
@@ -120,8 +114,10 @@ class LectureConfigFragment : BaseFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
             selectedFolderPosition = data?.getIntExtra(CHOOSED_FOLDER_POSITION, -1) ?: -1
-            if (selectedFolderPosition == -1)
+            if (selectedFolderPosition == -1) {
                 ti_layout_folder.isEnabled = true
+                ti_layout_folder.editText?.text?.clear()
+            }
             else {
                 ti_layout_folder.editText?.setText(folders[selectedFolderPosition].name)
                 ti_layout_folder.isEnabled = false

@@ -13,7 +13,7 @@
     <string name="chronometer">00:00:00</string>
     <string name="hint_lecture">Lecture topic name</string>
     <string name="hint_folder">Create a folder or choose existing</string>
-    <string name="hint_download">Download lecture to server</string>
+    <string name="hint_download">Upload lecture to server</string>
     <string name="title_permission">Permissions denied</string>
     <string name="permissions_required">App requires RECORD_AUDIO permission to access mic and WRITE_EXTERNAL_STORAGE to
         save recorded audio
@@ -36,5 +36,5 @@
     <string name="choose_folder">Choose folder</string>
     <string name="subject_name">Subject name</string>
     <string name="title_activity_folder_info">FolderInfoActivity</string>
-
+    <string name="lectures_count">%d lectures</string>
 </resources>

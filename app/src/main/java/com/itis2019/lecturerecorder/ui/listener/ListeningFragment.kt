@@ -6,35 +6,30 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.navArgs
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.service.AudioPlayer.AudioPlayerService
 import com.itis2019.lecturerecorder.ui.adapters.MarkAdapter
-import com.itis2019.lecturerecorder.utils.dagger.DiActivity
+import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
-import kotlinx.android.synthetic.main.activity_listening.*
-import kotlinx.android.synthetic.main.activity_listening.btn_play_pause
-import kotlinx.android.synthetic.main.activity_listening.rv_marks
-import javax.inject.Inject
+import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.fragment_listening.*
 
-class ListeningActivity : DiActivity() {
+class ListeningFragment : BaseFragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: ListeningViewModel
+    private val args: ListeningFragmentArgs by navArgs()
 
-    private val args: ListeningActivityArgs by navArgs()
+    override lateinit var viewModel: ListeningViewModel
 
     private lateinit var service: AudioPlayerService
     private var bound: Boolean = false
-    private var lectureId: Long = 0
     private lateinit var filePath: String
     private var isInitialState = true
 
@@ -52,31 +47,49 @@ class ListeningActivity : DiActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_listening)
+    override fun initViewModel() {
+        AndroidSupportInjection.inject(this)
+        viewModel = injectViewModel(viewModelFactory)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activity?.run {
+            Intent(this, AudioPlayerService::class.java).also { intent ->
+                bindService(intent, connection, Context.BIND_AUTO_CREATE)
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (bound)
+            unbindService()
+    }
+
+    private fun unbindService() {
+        activity?.run {
+            unbindService(connection)
+            stopService(Intent(activity, AudioPlayerService::class.java))
+        }
+        bound = false
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? =
+        inflater.inflate(R.layout.fragment_listening, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel = injectViewModel(viewModelFactory)
         val lecture = args.lecture
-        lectureId = lecture.id
         filePath = lecture.filePath
-        Intent(this, AudioPlayerService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
-        initObservers()
         initRecycler()
         initListeners()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        service.stop()
-        unbindService(connection)
-        stopService(Intent(this, AudioPlayerService::class.java))
-    }
-
-    private fun initObservers() {
+    override fun initObservers() {
         observeLoadingview(progress_bar)
-//        observeError()
         observeMarkList()
         observeSeekWithTimecode()
         observeIsPlaying()
@@ -88,16 +101,15 @@ class ListeningActivity : DiActivity() {
             if (isInitialState) {
                 service.playSong(filePath)
                 seek_bar.max = service.getDuration()
-                startService(Intent(this, AudioPlayerService::class.java))
+                activity?.run {
+                    startService(Intent(this, AudioPlayerService::class.java))
+                }
                 observeCurrentTime()
                 isInitialState = false
                 return@Observer
             }
-            if (it) {
-                service.pause()
-            } else {
-                service.play()
-            }
+            if (it) service.pause()
+            else service.play()
         })
 
     private fun observeCurrentTime() =
@@ -106,7 +118,7 @@ class ListeningActivity : DiActivity() {
         })
 
     private fun observeMarkList() =
-        viewModel.fetchMarks(lectureId).observe(this, Observer {
+        viewModel.fetchMarks(args.lecture.id).observe(this, Observer {
             (rv_marks.adapter as MarkAdapter).submitList(it)
         })
 
@@ -120,15 +132,10 @@ class ListeningActivity : DiActivity() {
             view.visibility = if (it) View.VISIBLE else View.GONE
         })
 
-    private fun observeError(view: View) =
-        viewModel.error().observe(this, Observer {
-            Snackbar.make(view, it.localizedMessage, Snackbar.LENGTH_SHORT).show()
-        })
-
     private fun initRecycler() {
-        rv_marks.layoutManager = LinearLayoutManager(this)
+        rv_marks.layoutManager = LinearLayoutManager(activity)
         rv_marks.adapter = MarkAdapter { mark -> viewModel.markItemClicked(mark.time) }
-        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
         rv_marks.addItemDecoration(itemDecoration)
     }
 

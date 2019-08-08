@@ -2,6 +2,7 @@ package com.itis2019.lecturerecorder.utils
 
 import android.text.TextUtils
 import android.widget.EditText
+import com.itis2019.lecturerecorder.R
 import java.util.concurrent.TimeUnit
 
 fun getTimeInFormatWithSeconds(millis: Long): String =
@@ -16,3 +17,15 @@ fun validateEditText(editText: EditText, text: String): Boolean {
     }
     return true
 }
+
+fun getRandomGradientColor(): Int = listOf(
+    R.drawable.gradient_blue,
+    R.drawable.gradient_dark_skies,
+    R.drawable.gradient_green,
+    R.drawable.gradient_grey,
+    R.drawable.gradient_orange,
+    R.drawable.gradient_purple,
+    R.drawable.gradient_red,
+    R.drawable.gradient_yellow
+).random()
+

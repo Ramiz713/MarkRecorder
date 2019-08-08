@@ -1,17 +1,18 @@
 package com.itis2019.lecturerecorder.ui.folderList
 
-import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.app.AlertDialog
 import android.app.Dialog
+import android.os.Bundle
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.getRandomGradientColor
 import dagger.android.support.AndroidSupportInjection
-import java.util.Calendar
+import java.util.*
 import javax.inject.Inject
 
 class FolderCreationDialog : DialogFragment() {
@@ -40,7 +41,7 @@ class FolderCreationDialog : DialogFragment() {
                 val name = textInput?.text.toString()
                 if (name.isNotEmpty()) {
                     viewModel.createFolder(
-                        Folder(0, name, Calendar.getInstance().time, R.drawable.gradient_yellow)
+                        Folder(0, name, Calendar.getInstance().time, getRandomGradientColor())
                     )
                     dismiss()
                 } else textInput?.error = getString(R.string.is_not_valid)

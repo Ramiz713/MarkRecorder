@@ -1,11 +1,10 @@
 package com.itis2019.lecturerecorder.repository.impl
 
 import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.repository.database.LectureDao
 import com.itis2019.lecturerecorder.repository.LectureRepository
 import com.itis2019.lecturerecorder.repository.converters.convertToDbLecture
 import com.itis2019.lecturerecorder.repository.converters.convertToLecture
-import io.reactivex.Flowable
+import com.itis2019.lecturerecorder.repository.database.LectureDao
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,14 +12,16 @@ import io.reactivex.schedulers.Schedulers
 
 class LectureRepositoryImpl(private val lectureDao: LectureDao) : LectureRepository {
 
-    override fun getAllLectures(): Flowable<List<Lecture>> =
+    override fun getAllLectures(): Observable<List<Lecture>> =
         lectureDao.getAll()
             .map { list -> list.map { it.convertToLecture() } }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
-    override fun getLectures(folderId: Long): Flowable<List<Lecture>> =
+    override fun getLectures(folderId: Long): Observable<List<Lecture>> =
         lectureDao.getLectures(folderId)
             .map { list -> list.map { it.convertToLecture() } }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 
     override fun getLecture(id: Long): Single<Lecture> =

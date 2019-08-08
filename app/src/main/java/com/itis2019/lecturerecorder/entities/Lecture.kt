@@ -2,12 +2,13 @@ package com.itis2019.lecturerecorder.entities
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
+import java.util.*
 
 @Parcelize
 data class Lecture(
     val id: Long = 0,
     val name: String = "",
+    val marks: List<Mark> = listOf(),
     val duration: Long = 0,
     val creationDate: Date = Date(0),
     val filePath: String = "",

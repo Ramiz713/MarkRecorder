@@ -11,10 +11,19 @@
         android:label="fragment_lecture_list"
         tools:layout="@layout/fragment_lecture_list">
         <action
-            android:id="@+id/action_navigation_lectures_to_recorderActivity"
-            app:destination="@+id/recorderActivity" />
-        <action android:id="@+id/action_navigation_lectures_to_listeningActivity"
-                app:destination="@id/listeningActivity"/>
+            android:id="@+id/action_navigation_lectures_to_recordingFragment"
+            app:destination="@id/recordingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_navigation_lectures_to_listeningFragment"
+            app:destination="@id/listeningFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -23,11 +32,12 @@
         android:label="fragment_folder_list"
         tools:layout="@layout/fragment_folder_list" >
         <action
-            android:id="@+id/action_navigation_folders_to_folderInfoActivity"
-            app:destination="@id/folderInfoActivity" />
-        <action
-            android:id="@+id/action_navigation_folders_to_listeningActivity"
-            app:destination="@id/listeningActivity" />
+            android:id="@+id/action_navigation_folders_to_folderInfoFragment"
+            app:destination="@id/folderInfoFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -35,26 +45,58 @@
         android:name="com.itis2019.lecturerecorder.ui.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
-    <activity
-        android:id="@+id/recorderActivity"
-        android:name="com.itis2019.lecturerecorder.ui.recorder.RecorderActivity"
-        android:label="activity_recorder"
-        tools:layout="@layout/activity_recorder" />
-    <activity android:id="@+id/listeningActivity"
-              android:name="com.itis2019.lecturerecorder.ui.listener.ListeningActivity"
-              android:label="activity_listening" tools:layout="@layout/activity_listening">
+    <fragment
+        android:id="@+id/recordingFragment"
+        android:name="com.itis2019.lecturerecorder.ui.recorder.recording.RecordingFragment"
+        android:label="recording_fragment"
+        tools:layout="@layout/recording_fragment">
+        <action
+            android:id="@+id/action_recordingFragment_to_lectureConfigFragment"
+            app:destination="@id/lectureConfigFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/lectureConfigFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/lectureConfigFragment"
+        android:name="com.itis2019.lecturerecorder.ui.recorder.lectureConfig.LectureConfigFragment"
+        android:label="lecture_config_fragment"
+        tools:layout="@layout/lecture_config_fragment">
         <argument
             android:name="lecture"
             app:argType="com.itis2019.lecturerecorder.entities.Lecture" />
-    </activity>
-    <activity
-        android:id="@+id/folderInfoActivity"
-        android:name="com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoActivity"
-        android:label="content_folder_info"
-        tools:layout="@layout/content_folder_info" >
+        <action
+            android:id="@+id/action_lectureConfigFragment_to_navigation_lectures"
+            app:destination="@id/navigation_lectures"
+            app:popUpTo="@+id/navigation_lectures"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/listeningFragment"
+        android:name="com.itis2019.lecturerecorder.ui.listener.ListeningFragment"
+        android:label="fragment_listening"
+        tools:layout="@layout/fragment_listening">
+        <argument
+            android:name="lecture"
+            app:argType="com.itis2019.lecturerecorder.entities.Lecture" />
+    </fragment>
+    <fragment
+        android:id="@+id/folderInfoFragment"
+        android:name="com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoFragment"
+        android:label="FolderInfoFragment">
         <argument
             android:name="folder"
             app:argType="com.itis2019.lecturerecorder.entities.Folder" />
-    </activity>
+        <action
+            android:id="@+id/action_folderInfoFragment_to_listeningFragment"
+            app:destination="@id/listeningFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 
 </navigation>

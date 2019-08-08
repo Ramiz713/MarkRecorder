@@ -39,12 +39,14 @@ class App : Application(), HasActivityInjector {
             val recordingServiceChannel = NotificationChannel(
                 RECORDING_CHANNEL_ID,
                 RECORDING_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
 
             val playerServiceChannel = NotificationChannel(
                 PLAYING_CHANNEL_ID,
                 PLAYING_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(recordingServiceChannel)
             manager.createNotificationChannel(playerServiceChannel)
@@ -52,4 +54,14 @@ class App : Application(), HasActivityInjector {
     }
 
     override fun activityInjector(): AndroidInjector<Activity> = activityInjector
+
+    fun goodSegment(badNumbers: Array<Int>, l: Int, r: Int): Int {
+        val list = badNumbers.filter { n -> n in l..r }.toMutableList()
+        list.add(l - 1)
+        list.add(r + 1)
+        return list.sorted()
+            .zipWithNext()
+            .map { z -> z.second - z.first - 1 }
+            .max() ?: 0
+    }
 }

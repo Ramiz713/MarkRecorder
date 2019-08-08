@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 class AudioRecorderImpl : AudioRecorder {
 
-    private var isRecording = true
+    private var isRecording = false
     private var isPaused = false
 
     private var totalTime: Long = 0
@@ -43,7 +43,7 @@ class AudioRecorderImpl : AudioRecorder {
     )
 
     private lateinit var file: File
-    private lateinit var os: FileOutputStream
+    private lateinit var fileOutput: FileOutputStream
 
     private val disposables = CompositeDisposable()
 
@@ -53,7 +53,8 @@ class AudioRecorderImpl : AudioRecorder {
     override fun getTime(): Flowable<Long> = timer
 
     private val timer: Flowable<Long> =
-        Flowable.interval(1000, TimeUnit.MILLISECONDS)
+        Flowable.interval(1000, TimeUnit.MILLISECONDS, Schedulers.io())
+            .filter { isRecording }
             .filter { !isPaused }
             .map {
                 totalTime += 1000
@@ -99,17 +100,12 @@ class AudioRecorderImpl : AudioRecorder {
         val filePath = "$storeLocation/LectureRecorder/$fileName"
         file = File(filePath)
 
-        os = FileOutputStream(file)
-        writeWavHeader(
-            os,
-            CHANNEL,
-            SAMPLE_RATE,
-            ENCODING
-        )
+        fileOutput = FileOutputStream(file)
+        writeWavHeader(fileOutput, CHANNEL, SAMPLE_RATE, ENCODING)
     }
 
     private fun writeData(data: ByteArray) {
-        os.write(data, 0, data.size)
+        fileOutput.write(data, 0, data.size)
     }
 
     override fun pauseRecord() {
@@ -130,12 +126,13 @@ class AudioRecorderImpl : AudioRecorder {
 
     override fun finishRecordWithoutSaving() {
         finishRecording()
-        file.deleteOnExit()
+        if (::file.isInitialized) file.delete()
     }
 
     private fun finishRecording() {
         isRecording = false
-        disposables.clear()
-        os.close()
+        totalTime = 0
+        audioRecord.release()
+        if (::fileOutput.isInitialized) fileOutput.close()
     }
 }

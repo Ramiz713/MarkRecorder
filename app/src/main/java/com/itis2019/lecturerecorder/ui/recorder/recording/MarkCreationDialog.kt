@@ -17,13 +17,11 @@ class MarkCreationDialog : DialogFragment() {
 
     companion object {
         private const val EXTRA_TIME = "time"
-        private const val EXTRA_LECTURE_ID = "lectureId"
 
-        fun newInstance(time: Long, lectureId: Long): MarkCreationDialog {
+        fun newInstance(time: Long): MarkCreationDialog {
             val dialog = MarkCreationDialog()
             val args = Bundle().apply {
                 putLong(EXTRA_TIME, time)
-                putLong(EXTRA_LECTURE_ID, lectureId)
             }
             dialog.arguments = args
             return dialog
@@ -37,7 +35,9 @@ class MarkCreationDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         AndroidSupportInjection.inject(this)
-        viewModel = (parentFragment as Fragment).injectViewModel(viewModelFactory)
+        val fragment = parentFragment?.childFragmentManager?.fragments?.find { it is RecordingFragment }
+            ?: Fragment()
+        viewModel = (fragment).injectViewModel(viewModelFactory)
 
         val builder = AlertDialog.Builder(activity)
         val inflater = activity?.layoutInflater
@@ -52,11 +52,10 @@ class MarkCreationDialog : DialogFragment() {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val textInput = view?.findViewById<TextInputEditText>(R.id.ti_mark_name)
                 val name = textInput?.text.toString()
-                val lectureId = arguments?.getLong(EXTRA_LECTURE_ID) ?: 0
                 val time = arguments?.getLong(EXTRA_TIME)?: 0
 
                 if (name.isNotEmpty()) {
-                    viewModel.insertMark(Mark(0, name, time, lectureId))
+                    viewModel.insertMark(Mark(0, name, time))
                     dismiss()
                 } else textInput?.error = getString(R.string.is_not_valid)
             }

@@ -24,6 +24,8 @@ class FolderInfoViewModel @Inject constructor(private val lectureRepository: Lec
 
     fun fetchLectures(folderId: Long) {
         disposables.add(lectureRepository.getLectures(folderId)
+            .doOnSubscribe { loadingData.setValue(true) }
+            .doAfterNext { loadingData.setValue(false) }
             .subscribe(
                 { lectures.value = it },
                 { errorData.value = it }

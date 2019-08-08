@@ -6,14 +6,12 @@ import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.repository.FolderRepository
 import com.itis2019.lecturerecorder.repository.LectureRepository
-import com.itis2019.lecturerecorder.repository.MarkRepository
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
 import javax.inject.Inject
 
 class LectureConfigViewModel @Inject constructor(
     private val lectureRepository: LectureRepository,
-    private val markRepository: MarkRepository,
     private val folderRepository: FolderRepository
 ) : BaseViewModel() {
 
@@ -52,29 +50,13 @@ class LectureConfigViewModel @Inject constructor(
     private fun insertLecture(lecture: Lecture) {
         disposables.add(
             lectureRepository
-                .updateLecture(lecture)
+                .insertLecture(lecture)
                 .subscribe(
-                    {},
+                    { errorData.value = Throwable("$it") },
                     { errorData.value = it })
         )
     }
 
-    fun deleteLectureAndMarks(lecture: Lecture) {
-        disposables.add(
-            markRepository.deleteAllLectureBindedMarks(lecture.id)
-                .subscribe(
-                    { deleteLecture(lecture) },
-                    { errorData.value = it })
-        )
-    }
-
-    private fun deleteLecture(lecture: Lecture) =
-        disposables.add(
-            lectureRepository.deleteLecture(lecture)
-                .subscribe(
-                    {},
-                    { errorData.value = it })
-        )
 
     fun onLoadFolders(): LiveData<List<Folder>> {
         disposables.add(folderRepository

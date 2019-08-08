@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.entities.Mark
 import com.itis2019.lecturerecorder.repository.LectureRepository
-import com.itis2019.lecturerecorder.repository.MarkRepository
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
 import io.reactivex.Flowable
@@ -14,8 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class ListeningViewModel @Inject constructor(
-    private val lectureRepository: LectureRepository,
-    private val markRepository: MarkRepository
+    private val lectureRepository: LectureRepository
 ) : BaseViewModel() {
 
     private lateinit var currentTimeFlowable: Flowable<Int>
@@ -55,9 +53,9 @@ class ListeningViewModel @Inject constructor(
     }
 
     fun fetchMarks(lectureId: Long): LiveData<List<Mark>> {
-        disposables.add(markRepository.getLectureMarks(lectureId)
+        disposables.add(lectureRepository.getLecture(lectureId)
             .subscribe(
-                { data -> marksData.value = data },
+                { lecture -> marksData.value = lecture.marks },
                 { error -> errorData.value = error }))
         return marksData
     }

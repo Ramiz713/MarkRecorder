@@ -9,7 +9,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.itis2019.lecturerecorder.App
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.ui.listener.ListeningActivity
+import com.itis2019.lecturerecorder.ui.MainActivity
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 
@@ -22,7 +22,7 @@ class AudioPlayerService : Service(), AudioPlayer {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val intent = Intent(this, ListeningActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.action = Intent.ACTION_MAIN
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
 

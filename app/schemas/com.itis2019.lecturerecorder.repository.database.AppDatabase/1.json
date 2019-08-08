@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "af66334e4904d53c122e76a3ae77dde5",
+    "identityHash": "8049cc34cf388a73fef61f7b0965ab73",
     "entities": [
       {
         "tableName": "lecture_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `filePath` TEXT NOT NULL, `folderName` TEXT NOT NULL, `folderBackground` INTEGER NOT NULL, `folderId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `marks` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `filePath` TEXT NOT NULL, `folderName` TEXT NOT NULL, `folderBackground` INTEGER NOT NULL, `folderId` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -17,6 +17,12 @@
           {
             "fieldPath": "name",
             "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "marks",
+            "columnName": "marks",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -103,50 +109,12 @@
         },
         "indices": [],
         "foreignKeys": []
-      },
-      {
-        "tableName": "mark_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `time` INTEGER NOT NULL, `lectureId` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "time",
-            "columnName": "time",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "lectureId",
-            "columnName": "lectureId",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"af66334e4904d53c122e76a3ae77dde5\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8049cc34cf388a73fef61f7b0965ab73')"
     ]
   }
 }

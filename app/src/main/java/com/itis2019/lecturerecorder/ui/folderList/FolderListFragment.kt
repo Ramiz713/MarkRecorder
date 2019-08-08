@@ -9,6 +9,7 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Folder
+import com.itis2019.lecturerecorder.ui.MainActivity
 import com.itis2019.lecturerecorder.ui.adapters.FolderAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -32,11 +33,10 @@ class FolderListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        image_btn_create_folder.setOnClickListener { viewModel.plusButtonClicked() }
+        (activity as MainActivity).setOnClickListenerToAddFolderButton { viewModel.plusButtonClicked() }
     }
 
-    override fun initObservers(view: View) {
-        observeError(view)
+    override fun initObservers() {
         observeLoading(progress_bar)
         observeFolderList()
         observeFolderCreation()
@@ -58,7 +58,7 @@ class FolderListFragment : BaseFragment() {
     private fun observeNavigateFolderInfo() =
         viewModel.navigateToFolderInfo.observe(this, Observer {folder ->
            folder?.let {
-               val action = FolderListFragmentDirections.actionNavigationFoldersToFolderInfoActivity(it)
+               val action = FolderListFragmentDirections.actionNavigationFoldersToFolderInfoFragment(it)
                findNavController(this).navigate(action)
            }
         })

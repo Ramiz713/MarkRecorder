@@ -7,6 +7,7 @@ fun DbLecture.convertToLecture(): Lecture =
     Lecture(
         id = this.id,
         name = this.name,
+        marks = this.marks.map { it.convertToMark() },
         folderBackground = this.folderBackground,
         folderId = this.folderId,
         folderName = this.folderName,
@@ -19,6 +20,7 @@ fun Lecture.convertToDbLecture(): DbLecture =
     DbLecture(
         id = this.id,
         name = this.name,
+        marks = this.marks.map { it.convertToDbMark() },
         folderBackground = this.folderBackground,
         folderId = this.folderId,
         folderName = this.folderName,

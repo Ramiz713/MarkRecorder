@@ -15,13 +15,15 @@ abstract class BaseFragment : Fragment() {
 
     protected abstract val viewModel: BaseViewModel
 
-    protected abstract fun initObservers(view: View)
+    protected abstract fun initObservers()
+
     protected abstract fun initViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        initObservers(view)
+        initObservers()
+        observeError(view)
     }
 
     protected fun observeLoading(view: View) =
