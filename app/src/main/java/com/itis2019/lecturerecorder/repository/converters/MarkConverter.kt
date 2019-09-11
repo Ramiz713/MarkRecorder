@@ -7,14 +7,12 @@ fun DbMark.convertToMark(): Mark =
     Mark(
         id = this.id,
         name = this.name,
-        time = this.time,
-        lectureId = this.lectureId
+        time = this.time
     )
 
 fun Mark.convertToDbMark(): DbMark =
     DbMark(
         id = this.id,
         name = this.name,
-        time = this.time,
-        lectureId = this.lectureId
+        time = this.time
     )

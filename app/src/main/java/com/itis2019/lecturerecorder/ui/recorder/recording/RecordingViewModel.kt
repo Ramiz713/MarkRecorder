@@ -2,95 +2,82 @@ package com.itis2019.lecturerecorder.ui.recorder.recording
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.itis2019.lecturerecorder.entities.Lecture
 import com.itis2019.lecturerecorder.entities.Mark
-import com.itis2019.lecturerecorder.repository.LectureRepository
-import com.itis2019.lecturerecorder.repository.MarkRepository
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class RecordingViewModel @Inject constructor(
-    val lectureRepository: LectureRepository,
-    val markRepository: MarkRepository
-) : BaseViewModel() {
+class RecordingViewModel @Inject constructor() : BaseViewModel() {
 
-    private lateinit var rawBytesFlowable: Flowable<ByteArray>
-    private lateinit var chronometerFlowable: Flowable<Long>
-
-    fun setDataSource(rawBytesFlowable: Flowable<ByteArray>, chronometerFlowable: Flowable<Long>) {
-        this.rawBytesFlowable = rawBytesFlowable
-        this.chronometerFlowable = chronometerFlowable
-    }
+    fun setDataSource(rawBytesFlowable: Flowable<ByteArray>, chronometerFlowable: Flowable<Long>) =
+        disposables.addAll(
+            rawBytesFlowable
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { rawBytesData.value = it },
+            chronometerFlowable
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { chronometerData.value = it })
 
     private val rawBytesData = MutableLiveData<ByteArray>()
     private val chronometerData = MutableLiveData<Long>()
     private val isPlayingData = MutableLiveData<Boolean>()
     private val stopBtnClickedData = SingleLiveEvent<Any>()
-    private val markBtnClickedData = SingleLiveEvent<Any>()
+    private val markEditClickedData = SingleLiveEvent<Int>()
 
     private val marksData = MutableLiveData<List<Mark>>()
-    private val lectureId = MutableLiveData<Long>()
 
-    val navigateToLectureConfig: LiveData<Any?>
-        get() = stopBtnClickedData
+    private var markId = 0
 
-    val showMarkCreationDialog: LiveData<Any?>
-        get() = markBtnClickedData
+    val navigateToLectureConfig: LiveData<Any?> = stopBtnClickedData
+
+    val showMarkCreationDialog: LiveData<Int?> = markEditClickedData
 
     fun isPlaying(): LiveData<Boolean> = isPlayingData
 
     fun stopBtnClicked() = stopBtnClickedData.call()
 
-    fun markBtnClicked() = markBtnClickedData.call()
-
-    fun playPauseBtnClicked(isPlay: Boolean) {
-        isPlayingData.value = isPlay.not()
+    fun markEditClicked(markId: Int) {
+        markEditClickedData.value = markId
     }
 
-    fun fetchRawBytes(): LiveData<ByteArray> {
-        disposables.add(rawBytesFlowable
-            .subscribeOn(Schedulers.computation())
+    fun playPauseBtnClicked() {
+        isPlayingData.value = isPlayingData.value?.not() ?: true
+    }
+
+    fun getRawBytes(): LiveData<ByteArray> = rawBytesData
+
+    fun getChronometerData(): LiveData<Long> = chronometerData
+
+    fun getMarks(): LiveData<List<Mark>> = marksData
+
+    fun insertMark() = chronometerData.value?.let { timeCode ->
+        Single.just(Mark(markId++, "", timeCode))
+            .doOnSubscribe { disposables.add(it) }
+            .map {
+                val list = marksData.value?.toMutableList() ?: mutableListOf()
+                list.add(it)
+                list
+            }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { rawBytesData.value = it })
-        return rawBytesData
+            .subscribeBy { marksData.value = it }
     }
 
-    fun fetchChronometerData(): LiveData<Long> {
-        disposables.add(chronometerFlowable
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { chronometerData.value = it })
-        return chronometerData
-    }
+    fun updateMark(mark: Mark) =
+        marksData.value?.toMutableList()?.let {
+            marksData.value = it.map { if (it.id == mark.id) mark else it }
+        }
 
-    fun insertLecture(): LiveData<Long> {
-        disposables.add(lectureRepository
-            .insertLecture(Lecture())
-            .subscribe(
-                { lecId ->
-                    lectureId.value = lecId
-                    getMarks(lecId)
-                },
-                { errorData.value = it }))
-        return lectureId
-    }
-
-    private fun getMarks(lectureId: Long) =
-        disposables.add(markRepository.getLectureMarks(lectureId)
-        .subscribe(
-            { data -> marksData.value = data },
-            { error -> errorData.value = error }))
-
-    fun fetchMarks(): LiveData<List<Mark>> = marksData
-
-    fun insertMark(mark: Mark) =
-        disposables.add(markRepository
-            .insertMark(mark)
-            .subscribe(
-                {}, { errorData.value = it })
-        )
+    fun deleteMark(mark: Mark) =
+        marksData.value?.toMutableList()?.let {
+            it.remove(mark)
+            marksData.value = it
+        }
 }

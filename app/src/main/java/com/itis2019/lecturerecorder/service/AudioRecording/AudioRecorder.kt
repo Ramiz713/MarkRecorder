@@ -4,17 +4,17 @@ import io.reactivex.Flowable
 
 interface AudioRecorder  {
 
-    abstract fun startRecord()
+    fun startRecord()
 
-    abstract fun finishRecordWithSaving(): String
+    fun finishRecordWithSaving(): String
 
-    abstract fun finishRecordWithoutSaving()
+    fun finishRecordWithoutSaving()
 
-    abstract fun pauseRecord()
+    fun pauseRecord()
 
-    abstract fun resumeRecord()
+    fun resumeRecord()
 
-    abstract fun getRawBytes() : Flowable<ByteArray>
+    fun getRawBytes(): Flowable<ByteArray>
 
-    abstract fun getTime() : Flowable<Long>
+    fun getTime(): Flowable<Long>
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cancel_button">Отменить</string>
+    <string name="card_title_date"><![CDATA[<b>Дата:</b> %1$s]]></string>
+    <string name="card_title_duration"><![CDATA[<b>Длительность:</b> %1$s]]></string>
+    <string name="card_title_folder"><![CDATA[<b>Папка:</b> %1$s]]></string>
+    <string name="card_title_name"><![CDATA[<b>Название записи:</b> %1$s]]></string>
+    <string name="choose_folder">Выберите папку</string>
+    <string name="confirm_button">Сохранить</string>
+    <string name="create_folder">Создание папки</string>
+    <string name="edit_mark">Редактирование названия метки</string>
+    <string name="extended_button">Начать запись</string>
+    <string name="hint_folder">Создайте папку или выберите существующую</string>
+    <string name="hint_lecture">Название записи</string>
+    <string name="info_lecture_configuration">Ваше аудио записано, для сохранения записи, настройте следующие параметры:</string>
+    <string name="is_not_valid">Не может быть пустым</string>
+    <string name="marks">Метки</string>
+    <string name="none_folder">Не выбрано(создание папки)</string>
+    <string name="records_count">%d записей</string>
+    <string name="settings">Настройки</string>
+    <string name="title_folders">Папки</string>
+    <string name="title_recent_records">Недавнее</string>
+    <string name="title_records">Аудиозаписи</string>
+    <string name="title_settings">Настройки</string>
+    <string name="title_your_folders">Папки</string>
+    <string name="app_name">Диктофон с метками</string>
+    <string name="hint_mark_name">Название метки</string>
+    <string name="mark_name_edit">Редактирование названия метки</string>
+    <string name="cancel">Отменить</string>
+    <string name="folder_name">Название папки</string>
+</resources>

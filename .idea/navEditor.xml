@@ -8,25 +8,55 @@
             <LayoutPositions>
               <option name="myPositions">
                 <map>
-                  <entry key="folderInfoActivity">
+                  <entry key="folderInfoFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
-                            <option name="y" value="368" />
+                            <option name="x" value="431" />
+                            <option name="y" value="-579" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_folderInfoFragment_to_listeningFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="listeningActivity">
+                  <entry key="lectureConfigFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
-                            <option name="y" value="724" />
+                            <option name="x" value="732" />
+                            <option name="y" value="447" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_lectureConfigFragment_to_navigation_lectures">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="listeningFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="440" />
+                            <option name="y" value="-110" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -37,18 +67,13 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="500" />
-                            <option name="y" value="410" />
+                            <option name="x" value="-37" />
+                            <option name="y" value="-469" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_navigation_folders_to_folderInfoActivity">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="action_navigation_folders_to_listeningActivity">
+                            <entry key="action_navigation_folders_to_folderInfoFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -63,18 +88,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="256" />
-                            <option name="y" value="54" />
+                            <option name="x" value="-92" />
+                            <option name="y" value="127" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_navigation_lectures_to_listeningActivity">
+                            <entry key="action_navigation_lectures_to_listeningFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_navigation_lectures_to_recorderActivity">
+                            <entry key="action_navigation_lectures_to_recordingFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -89,58 +114,22 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
+                            <option name="x" value="-109" />
+                            <option name="y" value="574" />
                           </Point>
                         </option>
                       </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="recorderActivity">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="744" />
-                            <option name="y" value="12" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </LayoutPositions>
-          </value>
-        </entry>
-        <entry key="record_graph.xml">
-          <value>
-            <LayoutPositions>
-              <option name="myPositions">
-                <map>
-                  <entry key="lectureConfigFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_lectureConfigFragment_to_mainActivity">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="mainActivity">
-                    <value>
-                      <LayoutPositions />
                     </value>
                   </entry>
                   <entry key="recordingFragment">
                     <value>
                       <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="438" />
+                            <option name="y" value="247" />
+                          </Point>
+                        </option>
                         <option name="myPositions">
                           <map>
                             <entry key="action_recordingFragment_to_lectureConfigFragment">
@@ -156,6 +145,11 @@
                 </map>
               </option>
             </LayoutPositions>
+          </value>
+        </entry>
+        <entry key="record_graph.xml">
+          <value>
+            <LayoutPositions />
           </value>
         </entry>
       </map>

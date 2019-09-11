@@ -5,8 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Mark(
-    val id: Long,
+    val id: Int,
     val name: String,
-    val time: Long,
-    val lectureId: Long
+    val time: Long
 ) : Parcelable

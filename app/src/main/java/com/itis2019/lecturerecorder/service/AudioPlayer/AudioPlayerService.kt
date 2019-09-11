@@ -9,7 +9,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.itis2019.lecturerecorder.App
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.ui.listener.ListeningActivity
+import com.itis2019.lecturerecorder.ui.MainActivity
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 
@@ -22,7 +22,7 @@ class AudioPlayerService : Service(), AudioPlayer {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val intent = Intent(this, ListeningActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         intent.action = Intent.ACTION_MAIN
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
 
@@ -39,24 +39,27 @@ class AudioPlayerService : Service(), AudioPlayer {
 
     override fun onBind(p0: Intent?): IBinder = binder
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.stop()
+        stopForeground(true)
+    }
+
     private val mediaPlayer = MediaPlayer()
 
     private var isStopped = true
 
     override fun stop() {
         isStopped = false
-        mediaPlayer.release()
+        mediaPlayer.stop()
     }
 
-    override fun pause() {
-        mediaPlayer.pause()
-    }
+    override fun pause() = mediaPlayer.pause()
 
-    override fun playSong(path: String) {
+    override fun setDataSource(path: String) {
         mediaPlayer.setDataSource(path)
         mediaPlayer.prepare()
-        mediaPlayer.isLooping = true
-        mediaPlayer.start()
+        mediaPlayer.isLooping = false
     }
 
     override fun play() {
@@ -70,7 +73,7 @@ class AudioPlayerService : Service(), AudioPlayer {
     override fun getCurrentListeningTime(): Flowable<Int> =
         Flowable.create({ emitter ->
             while (isStopped) {
-                if(mediaPlayer.isPlaying){
+                if (mediaPlayer.isPlaying) {
                     val time = mediaPlayer.currentPosition
                     emitter.onNext(time)
                 }
@@ -78,4 +81,6 @@ class AudioPlayerService : Service(), AudioPlayer {
         }, BackpressureStrategy.DROP)
 
     override fun getDuration(): Int = mediaPlayer.duration
+
+    override fun getAudioSessionId(): Int = mediaPlayer.audioSessionId
 }

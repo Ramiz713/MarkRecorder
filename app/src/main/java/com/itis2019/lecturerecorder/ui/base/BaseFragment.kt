@@ -15,13 +15,15 @@ abstract class BaseFragment : Fragment() {
 
     protected abstract val viewModel: BaseViewModel
 
-    protected abstract fun initObservers(view: View)
+    protected abstract fun initObservers()
+
     protected abstract fun initViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        initObservers(view)
+        initObservers()
+        observeError(view)
     }
 
     protected fun observeLoading(view: View) =
@@ -29,7 +31,7 @@ abstract class BaseFragment : Fragment() {
             view.visibility = if (it) View.VISIBLE else View.GONE
         })
 
-    protected fun observeError(view: View) =
+    private fun observeError(view: View) =
         viewModel.error().observe(viewLifecycleOwner, Observer {
             Snackbar.make(view, it.localizedMessage, Snackbar.LENGTH_SHORT).show()
         })

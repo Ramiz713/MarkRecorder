@@ -5,15 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
-import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.ui.adapters.LectureAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
+import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import dagger.android.support.AndroidSupportInjection
@@ -37,57 +36,51 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
 
-        extended_button.setOnClickListener {
+        (record_lecture_button).setOnClickListener {
             runWithPermissions(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
             ) {
-                viewModel.lectureRecordButtonClicked()
+                viewModel.openLectureRecorder(this)
             }
         }
     }
 
-    override fun initObservers(view: View) {
+    override fun initObservers() {
         observeLectureList()
-        observeNavigateToRecorder()
-        observeNavigateToListening()
         observeLoading(progress_bar)
-        observeError(view)
     }
 
-    private fun observeNavigateToRecorder() =
-        viewModel.navigateToRecorder.observe(this, Observer {
-            findNavController(this).navigate(R.id.action_navigation_lectures_to_recorderActivity)
-        })
-
-    private fun observeNavigateToListening() =
-        viewModel.navigateToListening.observe(this, Observer { lecture ->
-            lecture?.let {
-                val action = LectureListFragmentDirections.actionNavigationLecturesToListeningActivity(lecture)
-                findNavController(this).navigate(action)
-            }
-        })
-
     private fun observeLectureList() =
-        viewModel.onLoadLectures().observe(this, Observer {
-            (rv_lectures.adapter as LectureAdapter).submitList(it)
+        viewModel.getAllLectures().observe(this, Observer {
+            (rv_records.adapter as RecordAdapter).submitList(
+                listOf(RecordDataItem.Header(getString(R.string.title_recent_records))) + it
+            )
         })
 
     private fun initRecycler() {
         val manager = LinearLayoutManager(activity)
-        rv_lectures.adapter = LectureAdapter { lecture: Lecture -> viewModel.lectureItemClicked(lecture)}
-        rv_lectures.layoutManager = manager
-        rv_lectures.isNestedScrollingEnabled = false
-        nested_scroll_view.isNestedScrollingEnabled = true
+        rv_records.adapter = RecordAdapter { id: Long -> viewModel.openLecture(this, id) }
+        rv_records.layoutManager = manager
+        rv_records.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-        nested_scroll_view.setOnScrollChangeListener { _: NestedScrollView?, _: Int, scrollY: Int, _: Int, _: Int ->
-            if (scrollY > 0) {
-                extended_button.shrink(true)
-                return@setOnScrollChangeListener
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    (record_lecture_button).shrink()
+                    return
+                }
+                val firstItem = manager.findFirstCompletelyVisibleItemPosition()
+                if (firstItem == 0)
+                    (record_lecture_button).extend()
             }
-            val firstItem = manager.findFirstCompletelyVisibleItemPosition()
-            if (firstItem == 0)
-                extended_button.extend(true)
+        })
+
+        val paddingTop = rv_records.paddingTop
+        rv_records.setOnApplyWindowInsetsListener { v, insets ->
+            val top: Int = insets.systemWindowInsetTop + paddingTop
+            v.setPadding(v.paddingStart, top, v.paddingEnd, v.paddingBottom)
+            insets
         }
     }
 }

@@ -1,12 +1,13 @@
 package com.itis2019.lecturerecorder.repository.converters
 
-import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.repository.dbEntities.DbLecture
+import com.itis2019.lecturerecorder.entities.Record
+import com.itis2019.lecturerecorder.repository.dbEntities.DbRecord
 
-fun DbLecture.convertToLecture(): Lecture =
-    Lecture(
+fun DbRecord.convertToRecord(): Record =
+    Record(
         id = this.id,
         name = this.name,
+        marks = this.marks.map { it.convertToMark() },
         folderBackground = this.folderBackground,
         folderId = this.folderId,
         folderName = this.folderName,
@@ -15,10 +16,11 @@ fun DbLecture.convertToLecture(): Lecture =
         filePath = this.filePath
     )
 
-fun Lecture.convertToDbLecture(): DbLecture =
-    DbLecture(
+fun Record.convertToDbRecord(): DbRecord =
+    DbRecord(
         id = this.id,
         name = this.name,
+        marks = this.marks.map { it.convertToDbMark() },
         folderBackground = this.folderBackground,
         folderId = this.folderId,
         folderName = this.folderName,

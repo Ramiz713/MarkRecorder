@@ -15,7 +15,9 @@ import javax.inject.Singleton
         ActivityModule::class,
         RoomModule::class,
         ViewModelModule::class,
-        RepositoryModule::class]
+        RepositoryModule::class,
+        RouterModule::class
+    ]
 )
 interface AppComponent {
 

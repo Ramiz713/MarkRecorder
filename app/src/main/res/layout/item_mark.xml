@@ -2,18 +2,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tv_mark_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/mark_circle"
+        android:fontFamily="@font/roboto_regular"
+        android:gravity="center"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tv_mark_name"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
         android:ellipsize="end"
-        android:fontFamily="@font/roboto_light"
+        android:backgroundTint="@color/colorText"
+        android:fontFamily="@font/roboto_regular"
+        android:hint="@string/hint_mark_name"
         android:maxLines="1"
         android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/iv_edit_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginEnd="8dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:backgroundTint="@color/colorText"
+        android:src="@drawable/ic_edit_24dp" />
+
+    <ImageView
+        android:id="@+id/iv_delete_mark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginStart="8dp"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:backgroundTint="@color/colorText"
+        android:src="@drawable/ic_close_24dp" />
 
 </LinearLayout>

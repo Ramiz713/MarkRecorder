@@ -17,6 +17,8 @@ class AudioRecordService : Service(), AudioRecorder {
 
     private val binder = AudioRecordBinder()
 
+    private var flagNeedSaveRecord = false
+
     inner class AudioRecordBinder : Binder() {
         fun getService(): AudioRecordService = this@AudioRecordService
     }
@@ -51,9 +53,17 @@ class AudioRecordService : Service(), AudioRecorder {
 
     override fun getRawBytes(): Flowable<ByteArray> = audioRecorder.getRawBytes()
 
-    override fun finishRecordWithSaving(): String =
-        audioRecorder.finishRecordWithSaving()
+    override fun finishRecordWithSaving(): String {
+        flagNeedSaveRecord = true
+        return audioRecorder.finishRecordWithSaving()
+    }
 
     override fun finishRecordWithoutSaving() =
         audioRecorder.finishRecordWithoutSaving()
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!flagNeedSaveRecord) finishRecordWithoutSaving()
+        stopForeground(true)
+    }
 }
