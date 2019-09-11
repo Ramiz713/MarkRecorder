@@ -31,7 +31,7 @@ abstract class BaseFragment : Fragment() {
             view.visibility = if (it) View.VISIBLE else View.GONE
         })
 
-    protected fun observeError(view: View) =
+    private fun observeError(view: View) =
         viewModel.error().observe(viewLifecycleOwner, Observer {
             Snackbar.make(view, it.localizedMessage, Snackbar.LENGTH_SHORT).show()
         })

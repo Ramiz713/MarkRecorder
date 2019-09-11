@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="16dp"
     android:theme="@style/LightTheme.Settings"
     tools:context=".ui.recorder.lectureConfig.LectureConfigFragment">
 
@@ -23,48 +26,14 @@
         android:id="@+id/tv_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_regular"
         android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
         android:text="@string/info_lecture_configuration"
-        android:textSize="16sp"
+        android:textColor="@color/colorText"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/line_top" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_cancel"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/cancel_button"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/colorPrimary"
-        app:cornerRadius="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/btn_confirm"
-        app:layout_constraintTop_toTopOf="@id/line_bottom" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_confirm"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/confirm_button"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/colorAccent"
-        app:cornerRadius="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/btn_cancel"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/line_bottom" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ti_layout_lecture"
@@ -74,10 +43,11 @@
         app:boxBackgroundColor="@android:color/transparent"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/ti_layout_folder"
-        app:layout_constraintLeft_toLeftOf="@id/checkbox_download"
-        app:layout_constraintRight_toRightOf="@id/checkbox_download"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_info"
-        app:layout_constraintVertical_bias="1">
+        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/ti_lecture_name"
@@ -91,11 +61,13 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         app:boxBackgroundColor="@android:color/transparent"
         app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@id/checkbox_download"
-        app:layout_constraintLeft_toLeftOf="@id/checkbox_download"
-        app:layout_constraintRight_toLeftOf="@+id/image_btn_choose_folder">
+        app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/image_btn_choose_folder"
+        app:layout_constraintTop_toBottomOf="@id/ti_layout_lecture">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/ti_folder_name"
@@ -104,28 +76,19 @@
             android:hint="@string/hint_folder" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/image_btn_choose_folder"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/image_folder_choose"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/ti_layout_folder"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/ic_list"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@+id/ti_layout_lecture"
+        app:layout_constraintLeft_toRightOf="@id/ti_layout_folder"
         app:layout_constraintTop_toTopOf="@id/ti_layout_folder" />
-
-    <CheckBox
-        android:id="@+id/checkbox_download"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        android:layoutDirection="rtl"
-        android:text="@string/hint_download"
-        android:textColor="@android:color/darker_gray"
-        app:layout_constraintBottom_toTopOf="@id/line_bottom"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_top"
@@ -134,11 +97,35 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.3" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/line_bottom"
-        android:layout_width="wrap_content"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        android:layout_marginEnd="8dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="@string/cancel_button"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="@id/btn_confirm"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/btn_confirm"
+        app:layout_constraintTop_toTopOf="@id/btn_confirm" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:text="@string/confirm_button"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@color/colorAccent"
+        app:cornerRadius="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/btn_cancel"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ti_layout_folder" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,7 @@ package com.itis2019.lecturerecorder.ui.folderList
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -28,7 +29,7 @@ class FolderCreationDialog : DialogFragment() {
 
         val builder = AlertDialog.Builder(activity)
         val inflater = activity?.layoutInflater
-        val view = inflater?.inflate(R.layout.folder_creation_dialog, null)
+        val view = inflater?.inflate(R.layout.dialog_folder_creation, null)
         val dialog = builder.setView(view)
             .setTitle(R.string.create_folder)
             .setPositiveButton(R.string.ok, null)
@@ -47,6 +48,7 @@ class FolderCreationDialog : DialogFragment() {
                 } else textInput?.error = getString(R.string.is_not_valid)
             }
         }
+        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog
     }
 }

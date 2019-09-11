@@ -5,12 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.entities.Folder
-import com.itis2019.lecturerecorder.ui.MainActivity
-import com.itis2019.lecturerecorder.ui.adapters.FolderAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
 import dagger.android.support.AndroidSupportInjection
@@ -33,14 +31,15 @@ class FolderListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        (activity as MainActivity).setOnClickListenerToAddFolderButton { viewModel.plusButtonClicked() }
+        (add_folder_button).setOnClickListener { viewModel.plusButtonClicked() }
+        add_folder_button.hide()
+
     }
 
     override fun initObservers() {
         observeLoading(progress_bar)
         observeFolderList()
         observeFolderCreation()
-        observeNavigateFolderInfo()
     }
 
     private fun observeFolderCreation() =
@@ -51,21 +50,30 @@ class FolderListFragment : BaseFragment() {
         })
 
     private fun observeFolderList() =
-        viewModel.onLoadFolders().observe(this, Observer {
-            (rv_folders.adapter as FolderAdapter).submitList(it)
+        viewModel.getFolders().observe(this, Observer {
+            (rv_folders.adapter as RecordAdapter).submitList(
+                listOf(RecordDataItem.Header(getString(R.string.title_your_folders))) + it
+            )
+            add_folder_button.show()
         })
 
-    private fun observeNavigateFolderInfo() =
-        viewModel.navigateToFolderInfo.observe(this, Observer {folder ->
-           folder?.let {
-               val action = FolderListFragmentDirections.actionNavigationFoldersToFolderInfoFragment(it)
-               findNavController(this).navigate(action)
-           }
-        })
 
     private fun initRecycler() {
-        rv_folders.adapter = FolderAdapter { folder: Folder -> viewModel.folderItemClicked(folder) }
+        rv_folders.adapter = RecordAdapter { id: Long -> viewModel.openFolder(this, id) }
         rv_folders.layoutManager = GridLayoutManager(activity, 2)
-        rv_folders.isNestedScrollingEnabled = false
+        (rv_folders.layoutManager as GridLayoutManager).spanSizeLookup =
+            object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int = when (position) {
+                    0 -> 2
+                    else -> 1
+                }
+            }
+
+        val paddingTop = rv_folders.paddingTop
+        rv_folders.setOnApplyWindowInsetsListener { v, insets ->
+            val top: Int = insets.systemWindowInsetTop + paddingTop
+            v.setPadding(v.paddingStart, top, v.paddingEnd, v.paddingBottom)
+            insets
+        }
     }
 }

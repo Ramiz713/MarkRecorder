@@ -49,7 +49,7 @@
         android:id="@+id/recordingFragment"
         android:name="com.itis2019.lecturerecorder.ui.recorder.recording.RecordingFragment"
         android:label="recording_fragment"
-        tools:layout="@layout/recording_fragment">
+        tools:layout="@layout/fragment_recording">
         <action
             android:id="@+id/action_recordingFragment_to_lectureConfigFragment"
             app:destination="@id/lectureConfigFragment"
@@ -64,10 +64,10 @@
         android:id="@+id/lectureConfigFragment"
         android:name="com.itis2019.lecturerecorder.ui.recorder.lectureConfig.LectureConfigFragment"
         android:label="lecture_config_fragment"
-        tools:layout="@layout/lecture_config_fragment">
+        tools:layout="@layout/fragment_lecture_config">
         <argument
-            android:name="lecture"
-            app:argType="com.itis2019.lecturerecorder.entities.Lecture" />
+            android:name="record"
+            app:argType="com.itis2019.lecturerecorder.entities.Record" />
         <action
             android:id="@+id/action_lectureConfigFragment_to_navigation_lectures"
             app:destination="@id/navigation_lectures"
@@ -80,16 +80,16 @@
         android:label="fragment_listening"
         tools:layout="@layout/fragment_listening">
         <argument
-            android:name="lecture"
-            app:argType="com.itis2019.lecturerecorder.entities.Lecture" />
+            android:name="lectureId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/folderInfoFragment"
         android:name="com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoFragment"
         android:label="FolderInfoFragment">
         <argument
-            android:name="folder"
-            app:argType="com.itis2019.lecturerecorder.entities.Folder" />
+            android:name="folderId"
+            app:argType="long" />
         <action
             android:id="@+id/action_folderInfoFragment_to_listeningFragment"
             app:destination="@id/listeningFragment"

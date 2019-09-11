@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Color
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
@@ -11,10 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.entities.Lecture
+import com.itis2019.lecturerecorder.entities.Mark
+import com.itis2019.lecturerecorder.entities.Record
 import com.itis2019.lecturerecorder.service.AudioRecording.AudioRecordService
 import com.itis2019.lecturerecorder.ui.adapters.MarkAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
@@ -22,7 +23,7 @@ import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
 import com.itis2019.lecturerecorder.utils.getTimeInFormatWithSeconds
 import com.yalantis.waves.util.Horizon
 import dagger.android.support.AndroidSupportInjection
-import kotlinx.android.synthetic.main.recording_fragment.*
+import kotlinx.android.synthetic.main.fragment_recording.*
 import java.util.*
 
 class RecordingFragment : BaseFragment() {
@@ -30,7 +31,7 @@ class RecordingFragment : BaseFragment() {
     private lateinit var service: AudioRecordService
     private var bound: Boolean = false
     private var isInitialState = true
-    private var totalTime: Long = 0
+    private var previousStatusBarColor = 0
 
     private val connection = object : ServiceConnection {
 
@@ -57,13 +58,13 @@ class RecordingFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.recording_fragment, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_recording, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        horizon = Horizon(visualizer, resources.getColor(R.color.colorHorizonBackground), 44100, 1, 16)
-        btn_stop.isEnabled = false
-        btn_mark.isEnabled = false
+        horizon =
+            Horizon(visualizer, resources.getColor(R.color.colorText), 44100, 1, 16)
+        disableButtons()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,10 +74,28 @@ class RecordingFragment : BaseFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        activity?.window?.apply {
+            previousStatusBarColor = statusBarColor
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            statusBarColor = Color.TRANSPARENT
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activity?.window?.apply {
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            statusBarColor = previousStatusBarColor
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        if (bound)
-            unbindService()
+        if (bound) unbindService()
     }
 
     private fun unbindService() {
@@ -88,31 +107,32 @@ class RecordingFragment : BaseFragment() {
     }
 
     override fun initObservers() {
-        if (!bound)
-            return
+        if (!bound) return
         observeIsPlaying()
         observeNavigateToLectureConfig()
         observeMarkCreation()
         observeMarkList()
-        btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked(btn_play_pause.isPlay) }
+        btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked() }
         btn_stop.setOnClickListener { viewModel.stopBtnClicked() }
-        btn_mark.setOnClickListener { viewModel.markBtnClicked() }
+        btn_mark.setOnClickListener { viewModel.insertMark() }
         initRecycler()
     }
 
     private fun observeIsPlaying() =
-        viewModel.isPlaying().observe(this, Observer {
-            btn_play_pause.change(it, true)
+        viewModel.isPlaying().observe(viewLifecycleOwner, Observer {
+            btn_play_pause.setImageDrawable(
+                if (it) activity?.getDrawable(R.drawable.ic_pause_24dp)
+                else activity?.getDrawable(R.drawable.ic_play_24dp)
+            )
             if (isInitialState) {
                 initFlowableData()
                 service.startRecord()
-                btn_stop.isEnabled = true
-                btn_mark.isEnabled = true
+                enableButtons()
                 isInitialState = false
                 return@Observer
             }
-            if (it) service.pauseRecord()
-            else service.resumeRecord()
+            if (it) service.resumeRecord()
+            else service.pauseRecord()
         })
 
     private fun initFlowableData() {
@@ -123,45 +143,73 @@ class RecordingFragment : BaseFragment() {
     }
 
     private fun observeNavigateToLectureConfig() =
-        viewModel.navigateToLectureConfig.observe(this, Observer {
+        viewModel.navigateToLectureConfig.observe(viewLifecycleOwner, Observer {
             val path = service.finishRecordWithSaving()
-            val lecture = Lecture(
+            val lecture = Record(
                 id = 0,
-                duration = totalTime,
-                marks = viewModel.getMarks,
+                duration = viewModel.getChronometerData().value ?: 0L,
+                marks = viewModel.getMarks().value ?: listOf(),
                 creationDate = Calendar.getInstance().time,
-                filePath = path)
-            val action = RecordingFragmentDirections.actionRecordingFragmentToLectureConfigFragment(lecture)
+                filePath = path
+            )
+            val action =
+                RecordingFragmentDirections.actionRecordingFragmentToLectureConfigFragment(lecture)
             unbindService()
             findNavController(this).navigate(action)
         })
 
     private fun observeMarkCreation() =
-        viewModel.showMarkCreationDialog.observe(this, Observer {
-            fragmentManager?.let {
-                MarkCreationDialog.newInstance(totalTime).show(it, "MarkCreationDialog")
+        viewModel.showMarkCreationDialog.observe(viewLifecycleOwner, Observer { markId ->
+            markId?.let { id ->
+                fragmentManager?.let {
+                    MarkNameEditDialog.newInstance(viewModel.getChronometerData().value ?: 0, id)
+                        .show(it, getString(R.string.mark_name_edit))
+                }
             }
         })
 
     private fun observeMarkList() =
-        viewModel.fetchMarks().observe(viewLifecycleOwner, Observer {
-            (rv_marks.adapter as MarkAdapter).submitList(it)
-        }
-        )
+        viewModel.getMarks().observe(viewLifecycleOwner, Observer {
+            (rv_marks.adapter as MarkAdapter).run {
+                submitList(it.reversed())
+            }
+        })
 
     private fun observeFetchingRawBytesData() =
-        viewModel.fetchRawBytes().observe(this, Observer { horizon.updateView(it) })
+        viewModel.getRawBytes().observe(viewLifecycleOwner, Observer { horizon.updateView(it) })
 
     private fun observeFetchingChronometerData() =
-        viewModel.fetchChronometerData().observe(this, Observer {
+        viewModel.getChronometerData().observe(viewLifecycleOwner, Observer {
             tv_chronometer.text = getTimeInFormatWithSeconds(it)
-            totalTime = it
         })
 
     private fun initRecycler() {
         rv_marks.layoutManager = LinearLayoutManager(activity)
-        rv_marks.adapter = MarkAdapter {}
-        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-        rv_marks.addItemDecoration(itemDecoration)
+        val editListener =
+            { mark: Mark -> viewModel.markEditClicked(mark.id) }
+        val deleteListener = { mark: Mark -> viewModel.deleteMark(mark) }
+        rv_marks.adapter = MarkAdapter(editListener = editListener, deleteListener = deleteListener)
+    }
+
+    private fun enableButtons() {
+        btn_stop.run {
+            isEnabled = true
+            alpha = 1f
+        }
+        btn_mark.run {
+            isEnabled = true
+            alpha = 1f
+        }
+    }
+
+    private fun disableButtons() {
+        btn_stop.run {
+            isEnabled = false
+            alpha = 0.5f
+        }
+        btn_mark.run {
+            isEnabled = false
+            alpha = 0.5f
+        }
     }
 }

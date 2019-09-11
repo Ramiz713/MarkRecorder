@@ -18,7 +18,11 @@ class MainActivity : DiActivity() {
         setTheme(R.style.LectureRecorderTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        this.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        this.window?.apply {
+            setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
 
         navController = Navigation.findNavController(this, R.id.host_fragment)
         NavigationUI.setupWithNavController(bottom_nav, navController)
@@ -27,23 +31,23 @@ class MainActivity : DiActivity() {
             when (destination.id) {
                 R.id.navigation_lectures -> {
                     showBottomNav()
-                    hidePlus()
-                    showExtend()
+//                    hidePlus()
+//                    showExtend()
                 }
                 R.id.navigation_folders -> {
                     showBottomNav()
-                    hideExtend()
-                    showPlus()
+//                    hideExtend()
+//                    showPlus()
                 }
                 R.id.navigation_settings -> {
                     showBottomNav()
-                    hideExtend()
-                    hidePlus()
+//                    hideExtend()
+//                    hidePlus()
                 }
                 else -> {
                     hideBottomNav()
-                    hideExtend()
-                    hidePlus()
+//                    hideExtend()
+//                    hidePlus()
                 }
             }
         }
@@ -53,26 +57,26 @@ class MainActivity : DiActivity() {
 
     private fun hideBottomNav() = with(bottom_nav) { visibility = View.GONE }
 
-    private fun showExtend() = with(record_lecture_button) {
-        show(true)
-        extend(true)
-    }
-
-    private fun hideExtend() = with(record_lecture_button) {
-        shrink(true)
-        hide(true)
-    }
-
-    private fun showPlus() = with(add_folder_button) { show() }
-    private fun hidePlus() = with(add_folder_button) { hide() }
-
-    fun setOnClickListenerToRecordLectureButton(function: () -> Unit) =
-        record_lecture_button.setOnClickListener { function() }
-
-    fun setOnClickListenerToAddFolderButton(function: () -> Unit) =
-        add_folder_button.setOnClickListener { function() }
-
-    fun shrinkRecordLectureButton() = record_lecture_button.shrink(true)
-
-    fun extendRecordLectureButton() = record_lecture_button.extend(true)
+//    private fun showExtend() = with(record_lecture_button) {
+//        show(true)
+//        extend(true)
+//    }
+//
+//    private fun hideExtend() = with(record_lecture_button) {
+//        shrink(true)
+//        hide(true)
+//    }
+//
+//    private fun showPlus() = with(add_folder_button) { show() }
+//    private fun hidePlus() = with(add_folder_button) { hide() }
+//
+//    fun setOnClickListenerToRecordLectureButton(function: () -> Unit) =
+//        record_lecture_button.setOnClickListener { function() }
+//
+//    fun setOnClickListenerToAddFolderButton(function: () -> Unit) =
+//        add_folder_button.setOnClickListener { function() }
+//
+//    fun shrinkRecordLectureButton() = record_lecture_button.shrink(true)
+//
+//    fun extendRecordLectureButton() = record_lecture_button.extend(true)
 }

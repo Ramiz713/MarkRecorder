@@ -7,8 +7,8 @@ import com.itis2019.lecturerecorder.utils.DateConverter
 import com.itis2019.lecturerecorder.utils.MarksConverter
 import java.util.*
 
-@Entity(tableName = "lecture_data")
-data class DbLecture(
+@Entity(tableName = "record_data")
+data class DbRecord(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val name: String,

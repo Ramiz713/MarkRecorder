@@ -1,40 +1,36 @@
 <resources>
-    <string name="app_name">Lecture Recorder</string>
-    <string name="title_lectures">Lectures</string>
+    <string name="app_name">Mark Recorder</string>
+    <string name="title_records">Records</string>
     <string name="title_folders">Folders</string>
     <string name="title_settings">Settings</string>
-    <string name="extended_button">Record lecture</string>
+    <string name="title_recent_records">recent</string>
+    <string name="title_your_folders">folders</string>
+    <string name="extended_button">Start recording</string>
     <string name="confirm_button">Confirm</string>
-    <string name="cancel_button">Don\'t save</string>
-    <string name="recent_lectures">RECENT \nLECTURES</string>
-    <string name="your_folders">YOUR\nFOLDERS</string>
+    <string name="cancel_button">Cancel</string>
     <string name="settings">SETTINGS</string>
     <string name="marks">Marks</string>
-    <string name="chronometer">00:00:00</string>
-    <string name="hint_lecture">Lecture topic name</string>
+    <string name="chronometer" translatable="false">00:00:00</string>
+    <string name="hint_lecture">Record name</string>
     <string name="hint_folder">Create a folder or choose existing</string>
-    <string name="hint_download">Upload lecture to server</string>
     <string name="title_permission">Permissions denied</string>
     <string name="permissions_required">App requires RECORD_AUDIO permission to access mic and WRITE_EXTERNAL_STORAGE to
         save recorded audio
     </string>
-    <string name="info_lecture_configuration">Your lecture is recorded, you can configure lecture settings. If you don\'t choose any folder, default folder will be selected</string>
+    <string name="info_lecture_configuration">Your data is recorded, you can configure options</string>
     <string name="none_folder">"None(create folder)"</string>
-
-    <string name="ok">@android:string/ok</string>
+    <string name="ok" translatable="false">@android:string/ok</string>
     <string name="cancel">@android:string/cancel</string>
     <string name="is_not_valid">Cannot be empty</string>
-
-    <string name="lecture_topic"><![CDATA[<b>Lecture topic:</b> %1$s]]></string>
-    <string name="subject"><![CDATA[<b>Subject:</b> %1$s]]></string>
-    <string name="date"><![CDATA[<b>Date:</b> %1$s]]></string>
-    <string name="duration"><![CDATA[<b>Duration:</b> %1$s]]></string>
-
-    <string name="default_folder">Default</string>
+    <string name="card_title_name"><![CDATA[<b>Record name:</b> %1$s]]></string>
+    <string name="card_title_folder"><![CDATA[<b>Folder:</b> %1$s]]></string>
+    <string name="card_title_date"><![CDATA[<b>Date:</b> %1$s]]></string>
+    <string name="card_title_duration"><![CDATA[<b>Duration:</b> %1$s]]></string>
     <string name="create_folder">Folder creation</string>
-    <string name="create_mark">Mark creation</string>
+    <string name="edit_mark">Mark creation</string>
     <string name="choose_folder">Choose folder</string>
-    <string name="subject_name">Subject name</string>
-    <string name="title_activity_folder_info">FolderInfoActivity</string>
-    <string name="lectures_count">%d lectures</string>
+    <string name="records_count">%d records</string>
+    <string name="hint_mark_name">Mark\'s name</string>
+    <string name="mark_name_edit">Mark\'s name editing</string>
+    <string name="folder_name">Folder name</string>
 </resources>

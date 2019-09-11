@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="24dp"
-    android:paddingVertical="16dp"
+    android:padding="16dp"
     android:theme="@style/LightTheme.Dialog">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -17,11 +16,10 @@
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ti_mark_name"
+            android:id="@+id/ti_folder_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/subject_name" />
+            android:hint="@string/folder_name" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
-

@@ -8,74 +8,76 @@ import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class RecordingViewModel @Inject constructor() : BaseViewModel() {
 
-    private lateinit var rawBytesFlowable: Flowable<ByteArray>
-    private lateinit var chronometerFlowable: Flowable<Long>
-
-    fun setDataSource(rawBytesFlowable: Flowable<ByteArray>, chronometerFlowable: Flowable<Long>) {
-        this.rawBytesFlowable = rawBytesFlowable
-        this.chronometerFlowable = chronometerFlowable
-    }
+    fun setDataSource(rawBytesFlowable: Flowable<ByteArray>, chronometerFlowable: Flowable<Long>) =
+        disposables.addAll(
+            rawBytesFlowable
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { rawBytesData.value = it },
+            chronometerFlowable
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { chronometerData.value = it })
 
     private val rawBytesData = MutableLiveData<ByteArray>()
     private val chronometerData = MutableLiveData<Long>()
     private val isPlayingData = MutableLiveData<Boolean>()
     private val stopBtnClickedData = SingleLiveEvent<Any>()
-    private val markBtnClickedData = SingleLiveEvent<Any>()
+    private val markEditClickedData = SingleLiveEvent<Int>()
 
-    private val marksList: MutableList<Mark> = mutableListOf()
     private val marksData = MutableLiveData<List<Mark>>()
 
-    val navigateToLectureConfig: LiveData<Any?>
-        get() = stopBtnClickedData
+    private var markId = 0
 
-    val showMarkCreationDialog: LiveData<Any?>
-        get() = markBtnClickedData
+    val navigateToLectureConfig: LiveData<Any?> = stopBtnClickedData
 
-    val getMarks: List<Mark>
-        get() = marksList
+    val showMarkCreationDialog: LiveData<Int?> = markEditClickedData
 
     fun isPlaying(): LiveData<Boolean> = isPlayingData
 
     fun stopBtnClicked() = stopBtnClickedData.call()
 
-    fun markBtnClicked() = markBtnClickedData.call()
-
-    fun playPauseBtnClicked(isPlay: Boolean) {
-        isPlayingData.value = isPlay.not()
+    fun markEditClicked(markId: Int) {
+        markEditClickedData.value = markId
     }
 
-    fun fetchRawBytes(): LiveData<ByteArray> {
-        disposables.add(rawBytesFlowable
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { rawBytesData.value = it })
-        return rawBytesData
+    fun playPauseBtnClicked() {
+        isPlayingData.value = isPlayingData.value?.not() ?: true
     }
 
-    fun fetchChronometerData(): LiveData<Long> {
-        disposables.add(chronometerFlowable
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { chronometerData.value = it })
-        return chronometerData
-    }
+    fun getRawBytes(): LiveData<ByteArray> = rawBytesData
 
-    fun fetchMarks(): LiveData<List<Mark>> = marksData
+    fun getChronometerData(): LiveData<Long> = chronometerData
 
-    fun insertMark(mark: Mark) {
-        disposables.add(Single.just(Mark(marksList.size, mark.name, mark.time))
+    fun getMarks(): LiveData<List<Mark>> = marksData
+
+    fun insertMark() = chronometerData.value?.let { timeCode ->
+        Single.just(Mark(markId++, "", timeCode))
+            .doOnSubscribe { disposables.add(it) }
             .map {
-                marksList.add(it)
-                marksList.toList()
+                val list = marksData.value?.toMutableList() ?: mutableListOf()
+                list.add(it)
+                list
             }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { it -> marksData.value = it })
+            .subscribeBy { marksData.value = it }
     }
 
+    fun updateMark(mark: Mark) =
+        marksData.value?.toMutableList()?.let {
+            marksData.value = it.map { if (it.id == mark.id) mark else it }
+        }
+
+    fun deleteMark(mark: Mark) =
+        marksData.value?.toMutableList()?.let {
+            it.remove(mark)
+            marksData.value = it
+        }
 }

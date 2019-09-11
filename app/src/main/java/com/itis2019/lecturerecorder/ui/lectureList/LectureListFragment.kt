@@ -6,13 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
-import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.ui.MainActivity
-import com.itis2019.lecturerecorder.ui.adapters.LectureAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -38,58 +36,51 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
 
-        (activity as MainActivity).setOnClickListenerToRecordLectureButton {
+        (record_lecture_button).setOnClickListener {
             runWithPermissions(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
             ) {
-                viewModel.lectureRecordButtonClicked()
+                viewModel.openLectureRecorder(this)
             }
         }
     }
 
     override fun initObservers() {
         observeLectureList()
-        observeNavigateToRecorder()
-        observeNavigateToListening()
         observeLoading(progress_bar)
     }
 
-    private fun observeNavigateToRecorder() =
-        viewModel.navigateToRecorder.observe(this, Observer {
-            findNavController(this).navigate(R.id.action_navigation_lectures_to_recordingFragment)
-        })
-
-    private fun observeNavigateToListening() =
-        viewModel.navigateToListening.observe(this, Observer { lecture ->
-            lecture?.let {
-                val action = LectureListFragmentDirections.actionNavigationLecturesToListeningFragment(lecture)
-                findNavController(this).navigate(action)
-            }
-        })
-
     private fun observeLectureList() =
-        viewModel.onLoadLectures().observe(this, Observer {
-            (rv_lectures.adapter as LectureAdapter).addHeaderAndSubmitList(it, getString(R.string.recent_lectures))
+        viewModel.getAllLectures().observe(this, Observer {
+            (rv_records.adapter as RecordAdapter).submitList(
+                listOf(RecordDataItem.Header(getString(R.string.title_recent_records))) + it
+            )
         })
 
     private fun initRecycler() {
         val manager = LinearLayoutManager(activity)
-        rv_lectures.adapter = LectureAdapter { lecture: Lecture -> viewModel.lectureItemClicked(lecture) }
-        rv_lectures.layoutManager = manager
-
-        rv_lectures.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        rv_records.adapter = RecordAdapter { id: Long -> viewModel.openLecture(this, id) }
+        rv_records.layoutManager = manager
+        rv_records.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0) {
-                    (activity as MainActivity).shrinkRecordLectureButton()
+                    (record_lecture_button).shrink()
                     return
                 }
                 val firstItem = manager.findFirstCompletelyVisibleItemPosition()
                 if (firstItem == 0)
-                    (activity as MainActivity).extendRecordLectureButton()
+                    (record_lecture_button).extend()
             }
         })
+
+        val paddingTop = rv_records.paddingTop
+        rv_records.setOnApplyWindowInsetsListener { v, insets ->
+            val top: Int = insets.systemWindowInsetTop + paddingTop
+            v.setPadding(v.paddingStart, top, v.paddingEnd, v.paddingBottom)
+            insets
+        }
     }
 }

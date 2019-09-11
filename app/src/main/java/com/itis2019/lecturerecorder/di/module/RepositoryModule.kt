@@ -1,11 +1,11 @@
 package com.itis2019.lecturerecorder.di.module
 
 import com.itis2019.lecturerecorder.repository.FolderRepository
-import com.itis2019.lecturerecorder.repository.LectureRepository
+import com.itis2019.lecturerecorder.repository.RecordRepository
 import com.itis2019.lecturerecorder.repository.database.FolderDao
-import com.itis2019.lecturerecorder.repository.database.LectureDao
+import com.itis2019.lecturerecorder.repository.database.RecordDao
 import com.itis2019.lecturerecorder.repository.impl.FolderRepositoryImpl
-import com.itis2019.lecturerecorder.repository.impl.LectureRepositoryImpl
+import com.itis2019.lecturerecorder.repository.impl.RecordRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -15,8 +15,8 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideLectureRepository(lectureDao: LectureDao): LectureRepository =
-        LectureRepositoryImpl(lectureDao)
+    fun provideLectureRepository(lectureDao: RecordDao): RecordRepository =
+        RecordRepositoryImpl(lectureDao)
 
     @Provides
     @Singleton

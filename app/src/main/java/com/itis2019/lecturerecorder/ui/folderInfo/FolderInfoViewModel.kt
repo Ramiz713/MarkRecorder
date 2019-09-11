@@ -1,33 +1,61 @@
 package com.itis2019.lecturerecorder.ui.folderInfo
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.itis2019.lecturerecorder.entities.Lecture
-import com.itis2019.lecturerecorder.repository.LectureRepository
+import com.itis2019.lecturerecorder.entities.Folder
+import com.itis2019.lecturerecorder.repository.FolderRepository
+import com.itis2019.lecturerecorder.repository.RecordRepository
+import com.itis2019.lecturerecorder.router.Router
+import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
-import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
-class FolderInfoViewModel @Inject constructor(private val lectureRepository: LectureRepository) : BaseViewModel() {
+class FolderInfoViewModel @Inject constructor(
+    private val lectureRepository: RecordRepository,
+    private val folderRepository: FolderRepository,
+    private val router: Router
+) : BaseViewModel() {
 
-    private val lectures = MutableLiveData<List<Lecture>>()
-    private val lectureItemClicked = SingleLiveEvent<Lecture>()
+    private val lectures = MutableLiveData<List<RecordDataItem>>()
+    private val folder = MutableLiveData<Folder>()
+    private lateinit var header: RecordDataItem.Header
 
-    fun getLectures(): LiveData<List<Lecture>> = lectures
+    fun getLectures(): LiveData<List<RecordDataItem>> = lectures
 
-    val navigateToListening: LiveData<Lecture?>
-        get() = lectureItemClicked
+    fun getFolder(): LiveData<Folder> = folder
 
-    fun lectureItemClicked(lecture: Lecture) {
-        lectureItemClicked.value = lecture
+    fun openRecordFromFolder(fragment: Fragment, id: Long) =
+        router.openRecordFromFolder(fragment, id)
+
+    fun getFolder(folderId: Long) {
+        disposables.add(folderRepository.run {
+            getFolder(folderId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { loadingData.setValue(true) }
+                .doAfterTerminate { loadingData.setValue(false) }
+                .subscribe(
+                    {
+                        folder.value = it
+                        header =
+                            RecordDataItem.Header(getFolder().value?.name ?: "", isWhite = true)
+                        lectures.value = listOf(header)
+                        getLectures(folderId)
+                    },
+                    { errorData.value = it }
+                )
+        })
     }
 
-    fun fetchLectures(folderId: Long) {
-        disposables.add(lectureRepository.getLectures(folderId)
+    private fun getLectures(folderId: Long) {
+        disposables.add(lectureRepository.getRecordsFromFolder(folderId)
+            .map { it.map { record -> RecordDataItem.RecordItemFolderVersion(record) } }
+            .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { loadingData.setValue(true) }
             .doAfterNext { loadingData.setValue(false) }
             .subscribe(
-                { lectures.value = it },
+                { lectures.value = listOf(header.copy(recordsCount = it.count())) + it },
                 { errorData.value = it }
             ))
     }

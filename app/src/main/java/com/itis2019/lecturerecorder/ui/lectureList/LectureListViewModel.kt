@@ -1,37 +1,37 @@
 package com.itis2019.lecturerecorder.ui.lectureList
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.itis2019.lecturerecorder.repository.LectureRepository
-import com.itis2019.lecturerecorder.entities.Lecture
+import com.itis2019.lecturerecorder.repository.RecordRepository
+import com.itis2019.lecturerecorder.router.Router
+import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
-import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
-class LectureListViewModel @Inject constructor(private val repository: LectureRepository) : BaseViewModel() {
+class LectureListViewModel @Inject constructor(
+    private val repository: RecordRepository,
+    private val router: Router
+) : BaseViewModel() {
 
-    private var lectures = MutableLiveData<List<Lecture>>()
-    private val lectureRecordBtnClicked = SingleLiveEvent<Any>()
-    private val lectureItemClicked = SingleLiveEvent<Lecture>()
-
-    val navigateToRecorder: LiveData<Any?>
-        get() = lectureRecordBtnClicked
-
-    val navigateToListening: LiveData<Lecture?>
-        get() = lectureItemClicked
-
-    fun lectureRecordButtonClicked() = lectureRecordBtnClicked.call()
-
-    fun lectureItemClicked(lecture: Lecture) { lectureItemClicked.value = lecture}
-
-    fun onLoadLectures(): LiveData<List<Lecture>> {
-        disposables.add(repository.getAllLectures()
+    init {
+        disposables.add(repository.getAllRecords()
+            .map { it.map { record -> RecordDataItem.RecordItem(record) } }
+            .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { loadingData.setValue(true) }
-            .doAfterNext { loadingData.setValue(false) }
+            .doOnNext { loadingData.setValue(false) }
             .subscribe(
-                { lectures.value = it },
+                { records.value = it },
                 { errorData.value = it }
             ))
-        return lectures
     }
+
+    private var records = MutableLiveData<List<RecordDataItem.RecordItem>>()
+
+    fun openLectureRecorder(fragment: Fragment) = router.openRecordingFragment(fragment)
+
+    fun openLecture(fragment: Fragment, id: Long) = router.openRecord(fragment, id)
+
+    fun getAllLectures(): LiveData<List<RecordDataItem.RecordItem>> = records
 }

@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 import java.util.*
 
 @Parcelize
-data class Lecture(
+data class Record(
     val id: Long = 0,
     val name: String = "",
     val marks: List<Mark> = listOf(),

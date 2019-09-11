@@ -16,10 +16,11 @@
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ti_folder_name"
+            android:id="@+id/ti_mark_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/subject_name" />
+            android:hint="@string/hint_mark_name" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>
+

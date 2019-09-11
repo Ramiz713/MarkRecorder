@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/records_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.lectureList.LectureListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_lectures"
+        android:id="@+id/rv_records"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingStart="8dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="8dp"
+        android:padding="8dp"
         android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:scrollbars="vertical" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -25,6 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

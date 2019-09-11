@@ -1,10 +1,12 @@
 <resources>
 
     <style name="LectureRecorderTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">@color/colorText</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorWhiteSemiTransparent2</item>
         <item name="android:alertDialogTheme">@style/LightTheme.Dialog</item>
         <item name="colorBackgroundFloating">@color/colorPrimary</item>
         <item name="android:windowLightStatusBar">true</item>
@@ -12,6 +14,11 @@
 
     <style name="LectureRecorderTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="LectureRecorderTheme.FolderInfo">
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
@@ -29,11 +36,22 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="LectureItem" parent="Theme.MaterialComponents.Light">
+    <style name="RecordItem" parent="Widget.MaterialComponents.CardView">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:gravity">start</item>
     </style>
 
+    <style name="RecordItem.FolderVersion">
+        <item name="android:textColor">@color/colorText</item>
+    </style>
+
+    <style name="MyShapeAppearance">
+        <item name="cornerFamilyTopLeft">rounded</item>
+        <item name="cornerFamilyBottomLeft">rounded</item>
+        <item name="cornerFamilyTopRight">rounded</item>
+        <item name="cornerFamilyBottomRight">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>

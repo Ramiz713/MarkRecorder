@@ -39,24 +39,27 @@ class AudioPlayerService : Service(), AudioPlayer {
 
     override fun onBind(p0: Intent?): IBinder = binder
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.stop()
+        stopForeground(true)
+    }
+
     private val mediaPlayer = MediaPlayer()
 
     private var isStopped = true
 
     override fun stop() {
         isStopped = false
-        mediaPlayer.release()
+        mediaPlayer.stop()
     }
 
-    override fun pause() {
-        mediaPlayer.pause()
-    }
+    override fun pause() = mediaPlayer.pause()
 
-    override fun playSong(path: String) {
+    override fun setDataSource(path: String) {
         mediaPlayer.setDataSource(path)
         mediaPlayer.prepare()
-        mediaPlayer.isLooping = true
-        mediaPlayer.start()
+        mediaPlayer.isLooping = false
     }
 
     override fun play() {
@@ -70,7 +73,7 @@ class AudioPlayerService : Service(), AudioPlayer {
     override fun getCurrentListeningTime(): Flowable<Int> =
         Flowable.create({ emitter ->
             while (isStopped) {
-                if(mediaPlayer.isPlaying){
+                if (mediaPlayer.isPlaying) {
                     val time = mediaPlayer.currentPosition
                     emitter.onNext(time)
                 }
@@ -78,4 +81,6 @@ class AudioPlayerService : Service(), AudioPlayer {
         }, BackpressureStrategy.DROP)
 
     override fun getDuration(): Int = mediaPlayer.duration
+
+    override fun getAudioSessionId(): Int = mediaPlayer.audioSessionId
 }

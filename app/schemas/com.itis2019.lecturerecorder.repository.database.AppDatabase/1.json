@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8049cc34cf388a73fef61f7b0965ab73",
+    "identityHash": "c76f434693a18880e491317fa17843bd",
     "entities": [
       {
-        "tableName": "lecture_data",
+        "tableName": "record_data",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `marks` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `filePath` TEXT NOT NULL, `folderName` TEXT NOT NULL, `folderBackground` INTEGER NOT NULL, `folderId` INTEGER NOT NULL)",
         "fields": [
           {
@@ -114,7 +114,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8049cc34cf388a73fef61f7b0965ab73')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c76f434693a18880e491317fa17843bd')"
     ]
   }
 }
