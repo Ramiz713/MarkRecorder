@@ -36,12 +36,33 @@ class FolderListViewModel @Inject constructor(
 
     val showFolderCreationDialog: LiveData<Any?> = folderCreationDialog
 
+    private val folderRenameDialogEvent = SingleLiveEvent<Folder>()
+    val showFolderRenameDialog: LiveData<Folder?> = folderRenameDialogEvent
+
+    fun renameMenuItemClicked(folder: Folder) {
+        folderRenameDialogEvent.value = folder
+    }
+
     fun plusButtonClicked() = folderCreationDialog.call()
 
     fun openFolder(fragment: Fragment, id: Long) = router.openFolder(fragment, id)
 
     fun createFolder(folder: Folder) =
         disposables.add(repository.insertFolder(folder)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError { errorData.value = it }
+            .subscribe()
+        )
+
+    fun deleteFolder(folder: Folder) =
+        disposables.add(repository.deleteFolder(folder)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError { errorData.value = it }
+            .subscribe()
+        )
+
+    fun updateFolder(folder: Folder) =
+        disposables.add(repository.updateFolder(folder)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { errorData.value = it }
             .subscribe()

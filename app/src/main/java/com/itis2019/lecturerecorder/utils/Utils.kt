@@ -14,6 +14,9 @@ const val ITEM_VIEW_TYPE_ITEM = 1
 const val ITEM_VIEW_TYPE_ITEM_ANOTHER_STYLE = 2
 const val ITEM_VIEW_TYPE_FOLDER = 3
 
+const val MENU_DELETE = 1
+const val MENU_RENAME = 2
+
 fun Context.getFromHtml(stringId: Int, string: String) =
     HtmlCompat.fromHtml(
         this.getString(stringId, string),

@@ -33,4 +33,11 @@
     <string name="hint_mark_name">Mark\'s name</string>
     <string name="mark_name_edit">Mark\'s name editing</string>
     <string name="folder_name">Folder name</string>
+    <string name="now_playing_record_name"><![CDATA[Now playing:<br /><b>%1$s</b>]]></string>
+    <string name="rename">Rename</string>
+    <string name="delete">Delete</string>
+    <string name="rename_record">Record renaming</string>
+    <string name="rename_folder">Folder renaming</string>
+    <string name="hint_record_rename">Record name</string>
+    <string name="hint_folder_rename">Folder rename</string>
 </resources>

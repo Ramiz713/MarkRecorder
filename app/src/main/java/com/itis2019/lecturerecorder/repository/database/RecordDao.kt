@@ -18,7 +18,7 @@ interface RecordDao {
     fun getById(id: Long): Single<DbRecord>
 
     @Update
-    fun updateLecture(record: DbRecord)
+    fun update(record: DbRecord)
 
     @Insert
     fun insert(record: DbRecord): Long

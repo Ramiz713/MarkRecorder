@@ -1,13 +1,13 @@
 package com.itis2019.lecturerecorder.ui.adapters
 
 import android.graphics.Color
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.entities.Record
+import com.itis2019.lecturerecorder.utils.MENU_DELETE
+import com.itis2019.lecturerecorder.utils.MENU_RENAME
 import com.itis2019.lecturerecorder.utils.getFromHtml
 import com.itis2019.lecturerecorder.utils.getTimeInFormatWithSeconds
 import kotlinx.android.extensions.LayoutContainer
@@ -20,18 +20,25 @@ import java.text.DateFormat
 sealed class RecordDataViewHolder(override val containerView: View) :
     RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-    class RecordHolder(override val containerView: View) : RecordDataViewHolder(containerView) {
+    class RecordHolder(
+        override val containerView: View,
+        private val menuItemClickListener: MenuItem.OnMenuItemClickListener
+    ) : RecordDataViewHolder(containerView), View.OnCreateContextMenuListener {
 
         companion object {
-            fun from(parent: ViewGroup): RecordHolder {
+            fun from(
+                parent: ViewGroup,
+                menuItemClickListener: MenuItem.OnMenuItemClickListener
+            ): RecordHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = layoutInflater.inflate(R.layout.item_record, parent, false)
-                return RecordHolder(view)
+                return RecordHolder(view, menuItemClickListener)
             }
         }
 
         fun bind(item: Record) =
             with(containerView.context) {
+                containerView.setOnCreateContextMenuListener(this@RecordHolder)
                 card_view.background = getDrawable(item.folderBackground)
                 val date = DateFormat.getDateInstance().format(item.creationDate)
                 tv_record_name.text = getFromHtml(R.string.card_title_name, item.name)
@@ -42,6 +49,19 @@ sealed class RecordDataViewHolder(override val containerView: View) :
                 )
                 tv_folder.text = getFromHtml(R.string.card_title_folder, item.folderName)
             }
+
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            view: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            menu?.apply {
+                add(position, MENU_RENAME, Menu.NONE, R.string.rename)
+                    .setOnMenuItemClickListener(menuItemClickListener)
+                add(position, MENU_DELETE, Menu.NONE, R.string.delete)
+                    .setOnMenuItemClickListener(menuItemClickListener)
+            }
+        }
     }
 
     class RecordFolderVersionHolder(override val containerView: View) :
@@ -92,21 +112,41 @@ sealed class RecordDataViewHolder(override val containerView: View) :
             }
     }
 
-    class FolderHolder(override val containerView: View) : RecordDataViewHolder(containerView) {
+    class FolderHolder(
+        override val containerView: View,
+        private val menuItemClickListener: MenuItem.OnMenuItemClickListener
+    ) : RecordDataViewHolder(containerView),
+        View.OnCreateContextMenuListener {
 
         companion object {
-            fun from(parent: ViewGroup): FolderHolder {
+            fun from(
+                parent: ViewGroup,
+                menuListener: MenuItem.OnMenuItemClickListener
+            ): FolderHolder {
                 val inflater = LayoutInflater.from(parent.context)
                 val view = inflater.inflate(R.layout.item_folder, parent, false)
-                return FolderHolder(view)
+                return FolderHolder(view, menuListener)
             }
         }
 
         fun bind(item: Folder) =
             with(item) {
-                val context = containerView.context
-                card_view.background = context.getDrawable(background)
+                containerView.setOnCreateContextMenuListener(this@FolderHolder)
+                card_view.background = containerView.context.getDrawable(background)
                 tv_name.text = name.toUpperCase()
             }
+
+        override fun onCreateContextMenu(
+            menu: ContextMenu?,
+            view: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            menu?.apply {
+                add(position, MENU_RENAME, Menu.NONE, R.string.rename)
+                    .setOnMenuItemClickListener(menuItemClickListener)
+                add(position, MENU_DELETE, Menu.NONE, R.string.delete)
+                    .setOnMenuItemClickListener(menuItemClickListener)
+            }
+        }
     }
 }

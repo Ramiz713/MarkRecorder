@@ -10,13 +10,14 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Mark
 import com.itis2019.lecturerecorder.entities.Record
-import com.itis2019.lecturerecorder.service.AudioRecording.AudioRecordService
+import com.itis2019.lecturerecorder.service.audioRecording.AudioRecordService
 import com.itis2019.lecturerecorder.ui.adapters.MarkAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
@@ -71,6 +72,10 @@ class RecordingFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         Intent(activity, AudioRecordService::class.java).also { intent ->
             activity?.run { bindService(intent, connection, Context.BIND_AUTO_CREATE) }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (bound) unbindService()
+            findNavController(this@RecordingFragment).popBackStack()
         }
     }
 
@@ -159,10 +164,10 @@ class RecordingFragment : BaseFragment() {
         })
 
     private fun observeMarkCreation() =
-        viewModel.showMarkCreationDialog.observe(viewLifecycleOwner, Observer { markId ->
-            markId?.let { id ->
+        viewModel.showMarkCreationDialog.observe(viewLifecycleOwner, Observer { mark ->
+            mark?.let {
                 fragmentManager?.let {
-                    MarkNameEditDialog.newInstance(viewModel.getChronometerData().value ?: 0, id)
+                    MarkRenameDialog.newInstance(mark)
                         .show(it, getString(R.string.mark_name_edit))
                 }
             }
@@ -186,7 +191,7 @@ class RecordingFragment : BaseFragment() {
     private fun initRecycler() {
         rv_marks.layoutManager = LinearLayoutManager(activity)
         val editListener =
-            { mark: Mark -> viewModel.markEditClicked(mark.id) }
+            { mark: Mark -> viewModel.markEditClicked(mark) }
         val deleteListener = { mark: Mark -> viewModel.deleteMark(mark) }
         rv_marks.adapter = MarkAdapter(editListener = editListener, deleteListener = deleteListener)
     }

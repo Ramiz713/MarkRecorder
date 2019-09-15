@@ -27,8 +27,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.AudioRecording.AudioRecordService" />
-        <service android:name=".service.AudioPlayer.AudioPlayerService" />
+        <service android:name=".service.audioRecording.AudioRecordService" />
+        <service android:name=".service.audioPlayer.AudioPlayerService" />
     </application>
 
 </manifest>

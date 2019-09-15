@@ -5,9 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:theme="@style/RecordItem.FolderVersion"
-    app:cardBackgroundColor="@color/colorWhiteSemiTransparent"
     app:cardCornerRadius="16dp"
-    app:cardElevation="0dp">
+    app:cardBackgroundColor="@color/colorWhiteSemiTransparent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card_view"

@@ -10,6 +10,8 @@ interface FolderRepository {
 
     fun getFolder(id: Long): Single<Folder>
 
+    fun updateFolder(folder: Folder): Observable<Unit>
+
     fun insertFolder(folder: Folder): Observable<Long>
 
     fun deleteFolder(folder: Folder): Observable<Unit>

@@ -21,6 +21,10 @@ class FolderRepositoryImpl(private val folderDao: FolderDao) : FolderRepository 
             .map { it.convertToFolder() }
             .subscribeOn(Schedulers.io())
 
+    override fun updateFolder(folder: Folder): Observable<Unit> =
+        Observable.fromCallable { folderDao.update(folder.convertToDbFolder()) }
+            .subscribeOn(Schedulers.io())
+
     override fun insertFolder(folder: Folder): Observable<Long> =
         Observable.fromCallable { folderDao.insert(folder.convertToDbFolder()) }
             .subscribeOn(Schedulers.io())

@@ -10,16 +10,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.activity.addCallback
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Mark
-import com.itis2019.lecturerecorder.service.AudioPlayer.AudioPlayerService
+import com.itis2019.lecturerecorder.service.audioPlayer.AudioPlayerService
 import com.itis2019.lecturerecorder.ui.adapters.MarkAdapter
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.getFromHtml
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_listening.*
 
@@ -51,6 +53,7 @@ class ListeningFragment : BaseFragment() {
     override fun initViewModel() {
         AndroidSupportInjection.inject(this)
         viewModel = injectViewModel(viewModelFactory)
+        viewModel.loadRecord(args.lectureId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +62,10 @@ class ListeningFragment : BaseFragment() {
             Intent(this, AudioPlayerService::class.java).also { intent ->
                 bindService(intent, connection, Context.BIND_AUTO_CREATE)
             }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (bound) unbindService()
+            findNavController(this@ListeningFragment).popBackStack()
         }
     }
 
@@ -83,8 +90,6 @@ class ListeningFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = injectViewModel(viewModelFactory)
-        viewModel.loadRecord(args.lectureId)
         initRecycler()
         initListeners()
     }
@@ -92,17 +97,19 @@ class ListeningFragment : BaseFragment() {
     override fun initObservers() {
         if (!bound) return
         observeLoading(progress_bar)
-        observeLecture()
+        observeRecord()
         observeMarkList()
         observeSeekWithTimecode()
         observeIsPlaying()
     }
 
-    private fun observeLecture() =
+    private fun observeRecord() =
         viewModel.getLecture().observe(this, Observer {
             service.setDataSource(it.filePath)
             seek_bar.max = service.getDuration()
             blast.setAudioSessionId(service.getAudioSessionId())
+            tv_record_name.text =
+                activity?.getFromHtml(R.string.now_playing_record_name, it.name.toUpperCase())
         })
 
     private fun observeIsPlaying() =
@@ -120,8 +127,8 @@ class ListeningFragment : BaseFragment() {
                 service.play()
                 return@Observer
             }
-            if (it) service.pause()
-            else service.play()
+            if (it) service.play()
+            else service.pause()
         })
 
     private fun observeCurrentTime() =
@@ -143,12 +150,22 @@ class ListeningFragment : BaseFragment() {
         rv_marks.layoutManager = LinearLayoutManager(activity)
         rv_marks.adapter =
             MarkAdapter(clickListener = { mark: Mark -> viewModel.markItemClicked(mark.time) })
-        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-        rv_marks.addItemDecoration(itemDecoration)
+//        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
+//        rv_marks.addItemDecoration(itemDecoration)
     }
 
     private fun initListeners() {
         btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked() }
+        val paddingTop = tv_record_name.paddingTop
+        tv_record_name.setOnApplyWindowInsetsListener { v, insets ->
+            v.setPadding(
+                v.paddingStart,
+                paddingTop + insets.systemWindowInsetTop,
+                v.paddingEnd,
+                v.paddingBottom
+            )
+            insets
+        }
         seek_bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {

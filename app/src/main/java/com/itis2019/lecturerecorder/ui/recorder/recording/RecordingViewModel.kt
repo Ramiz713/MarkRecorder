@@ -29,7 +29,7 @@ class RecordingViewModel @Inject constructor() : BaseViewModel() {
     private val chronometerData = MutableLiveData<Long>()
     private val isPlayingData = MutableLiveData<Boolean>()
     private val stopBtnClickedData = SingleLiveEvent<Any>()
-    private val markEditClickedData = SingleLiveEvent<Int>()
+    private val markEditClickedData = SingleLiveEvent<Mark>()
 
     private val marksData = MutableLiveData<List<Mark>>()
 
@@ -37,14 +37,14 @@ class RecordingViewModel @Inject constructor() : BaseViewModel() {
 
     val navigateToLectureConfig: LiveData<Any?> = stopBtnClickedData
 
-    val showMarkCreationDialog: LiveData<Int?> = markEditClickedData
+    val showMarkCreationDialog: LiveData<Mark?> = markEditClickedData
 
     fun isPlaying(): LiveData<Boolean> = isPlayingData
 
     fun stopBtnClicked() = stopBtnClickedData.call()
 
-    fun markEditClicked(markId: Int) {
-        markEditClickedData.value = markId
+    fun markEditClicked(mark: Mark) {
+        markEditClickedData.value = mark
     }
 
     fun playPauseBtnClicked() {

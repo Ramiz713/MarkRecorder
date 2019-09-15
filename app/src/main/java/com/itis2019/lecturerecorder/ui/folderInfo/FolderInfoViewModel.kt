@@ -30,7 +30,7 @@ class FolderInfoViewModel @Inject constructor(
         router.openRecordFromFolder(fragment, id)
 
     fun getFolder(folderId: Long) {
-        disposables.add(folderRepository.run {
+        disposables.add(folderRepository.
             getFolder(folderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { loadingData.setValue(true) }
@@ -44,8 +44,7 @@ class FolderInfoViewModel @Inject constructor(
                         getLectures(folderId)
                     },
                     { errorData.value = it }
-                )
-        })
+                ))
     }
 
     private fun getLectures(folderId: Long) {

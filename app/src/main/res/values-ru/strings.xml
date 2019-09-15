@@ -28,4 +28,11 @@
     <string name="mark_name_edit">Редактирование названия метки</string>
     <string name="cancel">Отменить</string>
     <string name="folder_name">Название папки</string>
+    <string name="now_playing_record_name"><![CDATA[Сейчас играет:<br /><b>%1$s</b>]]></string>
+    <string name="rename">Переименовать</string>
+    <string name="delete">Удалить</string>
+    <string name="rename_record">Переименование записи</string>
+    <string name="rename_folder">Переименование папки</string>
+    <string name="hint_record_rename">Название записи</string>
+    <string name="hint_folder_rename">Название папки</string>
 </resources>

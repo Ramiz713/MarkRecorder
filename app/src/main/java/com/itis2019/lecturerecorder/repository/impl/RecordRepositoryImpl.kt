@@ -26,7 +26,7 @@ class RecordRepositoryImpl(private val recordDao: RecordDao) : RecordRepository 
             .subscribeOn(Schedulers.io())
 
     override fun updateRecord(lecture: Record): Observable<Unit> =
-        Observable.fromCallable { recordDao.updateLecture(lecture.convertToDbRecord()) }
+        Observable.fromCallable { recordDao.update(lecture.convertToDbRecord()) }
             .subscribeOn(Schedulers.io())
 
     override fun insertRecord(lecture: Record): Observable<Long> =
