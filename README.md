@@ -1,5 +1,5 @@
 # Mark Recorder
-Audio recorder, which can record audio with timecodes(In process)
+Audio recorder, that can record audio data with timecodes(marks)
 ### Used libraries:
 * AndroidX
 * DI - Dagger 2
