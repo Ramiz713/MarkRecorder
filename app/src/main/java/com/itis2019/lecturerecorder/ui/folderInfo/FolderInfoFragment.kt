@@ -13,9 +13,11 @@ import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
 import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
+import com.itis2019.lecturerecorder.ui.lectureList.RecordRenameDialog
 import com.itis2019.lecturerecorder.utils.MENU_DELETE
 import com.itis2019.lecturerecorder.utils.MENU_RENAME
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.deleteFile
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_folder_info.*
 
@@ -67,6 +69,8 @@ class FolderInfoFragment : BaseFragment() {
         observeLoading(progress_bar)
         observeFolder()
         observeLectures()
+        observeRecordRenaming()
+        observeRecordDelete()
     }
 
     private fun observeFolder() {
@@ -76,9 +80,23 @@ class FolderInfoFragment : BaseFragment() {
     }
 
     private fun observeLectures() =
-        viewModel.getLectures().observe(this, Observer {
+        viewModel.getRecords().observe(this, Observer {
             (rv_records.adapter as RecordAdapter).submitList(it)
         })
+
+    private fun observeRecordRenaming() =
+        viewModel.showRecordNameEditDialog.observe(this, Observer { record ->
+            record?.let {
+                fragmentManager?.let {
+                    RecordRenameDialog.newInstance(record)
+                        .show(childFragmentManager, "RecordCreationFragment")
+                }
+            }
+        })
+
+    private fun observeRecordDelete() {
+        viewModel.recordDeleting.observe(this, Observer { it?.let { deleteFile(it) } })
+    }
 
     private fun initRecycler() {
         rv_records.layoutManager = LinearLayoutManager(activity)
@@ -99,11 +117,11 @@ class FolderInfoFragment : BaseFragment() {
             .currentList[menuItem.groupId] as RecordDataItem.RecordItem
         when (menuItem.itemId) {
             MENU_RENAME -> {
-//                viewModel.renameMenuItemClicked(item.record)
+                viewModel.renameMenuItemClicked(item.record)
                 true
             }
             MENU_DELETE -> {
-//                viewModel.deleteRecord(item.record)
+                viewModel.deleteRecord(item.record)
                 true
             }
             else -> false

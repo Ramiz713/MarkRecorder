@@ -8,7 +8,6 @@
     <string name="choose_folder">Выберите папку</string>
     <string name="confirm_button">Сохранить</string>
     <string name="create_folder">Создание папки</string>
-    <string name="edit_mark">Редактирование названия метки</string>
     <string name="extended_button">Начать запись</string>
     <string name="hint_folder">Создайте папку или выберите существующую</string>
     <string name="hint_lecture">Название записи</string>
@@ -31,8 +30,16 @@
     <string name="now_playing_record_name"><![CDATA[Сейчас играет:<br /><b>%1$s</b>]]></string>
     <string name="rename">Переименовать</string>
     <string name="delete">Удалить</string>
+    <string name="rename_mark">Переименование метки</string>
     <string name="rename_record">Переименование записи</string>
     <string name="rename_folder">Переименование папки</string>
     <string name="hint_record_rename">Название записи</string>
     <string name="hint_folder_rename">Название папки</string>
+    <string name="confirm_folder_delete">Потвердите удаление папки</string>
+    <string name="folder_deleting_warning">Вы уверены, что хотите удалить папку? Все записи, привязанные к папке, также будут удалены</string>
+    <string name="empty_records_emoji">(·_·)</string>
+    <string name="empty_folders_emoji">(·.·)</string>
+    <string name="empty_records_explanation">У вас нет недавних записей. Создайте запись, нажав на кнопку ниже</string>
+    <string name="empty_folders_explanation">У вас нет папок! Измените это, нажав на кнопку с плюсом ниже </string>
+    <string name="setting_empty">There is empty. This feature is not ready yet</string>
 </resources>

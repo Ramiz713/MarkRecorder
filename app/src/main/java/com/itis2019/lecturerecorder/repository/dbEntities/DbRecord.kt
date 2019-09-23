@@ -18,7 +18,5 @@ data class DbRecord(
     @TypeConverters(DateConverter::class)
     val creationDate: Date,
     val filePath: String,
-    val folderName: String,
-    val folderBackground: Int,
     val folderId: Long
 )

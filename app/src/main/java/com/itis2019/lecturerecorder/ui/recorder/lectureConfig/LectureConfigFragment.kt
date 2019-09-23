@@ -58,7 +58,7 @@ class LectureConfigFragment : BaseFragment() {
         viewModel.showFolderChoosingDialog.observe(this, Observer {
             val dialogFragment = FolderChoosingDialog()
             fragmentManager?.let {
-                dialogFragment.show(it, "FolderChoosingDialog")
+                dialogFragment.show(childFragmentManager, "FolderChoosingDialog")
             }
         })
 

@@ -8,7 +8,7 @@ import com.itis2019.lecturerecorder.repository.FolderRepository
 import com.itis2019.lecturerecorder.repository.RecordRepository
 import com.itis2019.lecturerecorder.router.Router
 import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
-import com.itis2019.lecturerecorder.ui.base.BaseViewModel
+import com.itis2019.lecturerecorder.ui.base.BaseLectureListViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
@@ -16,13 +16,10 @@ class FolderInfoViewModel @Inject constructor(
     private val lectureRepository: RecordRepository,
     private val folderRepository: FolderRepository,
     private val router: Router
-) : BaseViewModel() {
+) : BaseLectureListViewModel(lectureRepository) {
 
-    private val lectures = MutableLiveData<List<RecordDataItem>>()
     private val folder = MutableLiveData<Folder>()
     private lateinit var header: RecordDataItem.Header
-
-    fun getLectures(): LiveData<List<RecordDataItem>> = lectures
 
     fun getFolder(): LiveData<Folder> = folder
 
@@ -40,22 +37,21 @@ class FolderInfoViewModel @Inject constructor(
                         folder.value = it
                         header =
                             RecordDataItem.Header(getFolder().value?.name ?: "", isWhite = true)
-                        lectures.value = listOf(header)
-                        getLectures(folderId)
+                        records.value = listOf(header)
+                        getRecords(folderId)
                     },
                     { errorData.value = it }
                 ))
     }
 
-    private fun getLectures(folderId: Long) {
+    private fun getRecords(folderId: Long) =
         disposables.add(lectureRepository.getRecordsFromFolder(folderId)
-            .map { it.map { record -> RecordDataItem.RecordItemFolderVersion(record) } }
+            .map { it.map { record -> RecordDataItem.RecordItem(record, true) } }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { loadingData.setValue(true) }
             .doAfterNext { loadingData.setValue(false) }
             .subscribe(
-                { lectures.value = listOf(header.copy(recordsCount = it.count())) + it },
+                { records.value = listOf(header.copy(recordsCount = it.count())) + it },
                 { errorData.value = it }
             ))
-    }
 }

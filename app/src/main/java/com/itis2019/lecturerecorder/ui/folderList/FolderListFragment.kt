@@ -1,5 +1,6 @@
 package com.itis2019.lecturerecorder.ui.folderList
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -8,13 +9,16 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.itis2019.lecturerecorder.R
+import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
 import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
 import com.itis2019.lecturerecorder.utils.MENU_DELETE
 import com.itis2019.lecturerecorder.utils.MENU_RENAME
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.deleteFile
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.explanation_content.*
 import kotlinx.android.synthetic.main.fragment_folder_list.*
 
 class FolderListFragment : BaseFragment() {
@@ -34,9 +38,11 @@ class FolderListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        (add_folder_button).setOnClickListener { viewModel.plusButtonClicked() }
-        add_folder_button.hide()
 
+        tv_emoji.text = getString(R.string.empty_folders_emoji)
+        tv_explanation.text = getString(R.string.empty_folders_explanation)
+
+        (add_folder_button).setOnClickListener { viewModel.plusButtonClicked() }
     }
 
     override fun initObservers() {
@@ -44,6 +50,7 @@ class FolderListFragment : BaseFragment() {
         observeFolderList()
         observeFolderCreation()
         observeFolderRenaming()
+        observeRecordDelete()
     }
 
     private fun observeFolderCreation() =
@@ -58,7 +65,7 @@ class FolderListFragment : BaseFragment() {
             (rv_folders.adapter as RecordAdapter).submitList(
                 listOf(RecordDataItem.Header(getString(R.string.title_your_folders))) + it
             )
-            add_folder_button.show()
+            explanation_content.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         })
 
     private fun observeFolderRenaming() =
@@ -71,6 +78,9 @@ class FolderListFragment : BaseFragment() {
             }
         })
 
+    private fun observeRecordDelete() {
+        viewModel.recordDeleting.observe(this, Observer { it?.let { deleteFile(it) } })
+    }
 
     private fun initRecycler() {
         rv_folders.adapter =
@@ -93,18 +103,33 @@ class FolderListFragment : BaseFragment() {
     }
 
     private val menuItemClickListener = MenuItem.OnMenuItemClickListener { menuItem ->
-        val item =
-            (rv_folders.adapter as RecordAdapter).currentList[menuItem.groupId] as RecordDataItem.FolderItem
+        val item = (rv_folders.adapter as RecordAdapter)
+            .currentList[menuItem.groupId] as RecordDataItem.FolderItem
         when (menuItem.itemId) {
             MENU_RENAME -> {
                 viewModel.renameMenuItemClicked(item.folder)
                 true
             }
             MENU_DELETE -> {
-                viewModel.deleteFolder(item.folder)
+                showAreYouSureDialog(item.folder)
                 true
             }
             else -> false
         }
+    }
+
+    private fun showAreYouSureDialog(folder: Folder) {
+        val alertDialog = AlertDialog.Builder(context, R.style.MarkRecorderTheme_Dialog)
+        alertDialog.setTitle(getString(R.string.confirm_folder_delete))
+            .setMessage(getString(R.string.folder_deleting_warning))
+            .setPositiveButton(
+                android.R.string.yes
+
+            ) { dialog, _ ->
+                viewModel.deleteFolder(folder)
+                dialog.dismiss()
+            }
+        alertDialog.setNegativeButton("NO") { dialog, _ -> dialog.cancel() }
+        alertDialog.show()
     }
 }

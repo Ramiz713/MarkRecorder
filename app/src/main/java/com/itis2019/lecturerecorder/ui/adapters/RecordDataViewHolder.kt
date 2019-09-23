@@ -2,6 +2,7 @@ package com.itis2019.lecturerecorder.ui.adapters
 
 import android.graphics.Color
 import android.view.*
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Folder
@@ -14,7 +15,6 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_folder.*
 import kotlinx.android.synthetic.main.item_header.*
 import kotlinx.android.synthetic.main.item_record.*
-import kotlinx.android.synthetic.main.item_record.card_view
 import java.text.DateFormat
 
 sealed class RecordDataViewHolder(override val containerView: View) :
@@ -36,18 +36,34 @@ sealed class RecordDataViewHolder(override val containerView: View) :
             }
         }
 
-        fun bind(item: Record) =
+        fun bind(item: Record, isWhite: Boolean) =
             with(containerView.context) {
                 containerView.setOnCreateContextMenuListener(this@RecordHolder)
-                card_view.background = getDrawable(item.folderBackground)
-                val date = DateFormat.getDateInstance().format(item.creationDate)
-                tv_record_name.text = getFromHtml(R.string.card_title_name, item.name)
-                tv_date.text = getFromHtml(R.string.card_title_date, date)
-                tv_duration.text = getFromHtml(
-                    R.string.card_title_duration,
-                    getTimeInFormatWithSeconds(item.duration)
-                )
-                tv_folder.text = getFromHtml(R.string.card_title_folder, item.folderName)
+                if (isWhite) {
+                    (card_view as CardView).setCardBackgroundColor(resources.getColor(R.color.colorWhiteSemiTransparentStatusBar))
+                    val date = DateFormat.getDateInstance().format(item.creationDate)
+                    val textColor = resources.getColor(R.color.colorText)
+                    tv_record_name.setTextColor(textColor)
+                    tv_record_name.text = getFromHtml(R.string.card_title_name, item.name)
+                    tv_date.setTextColor(textColor)
+                    tv_date.text = getFromHtml(R.string.card_title_date, date)
+                    tv_duration.setTextColor(textColor)
+                    tv_duration.text = getFromHtml(
+                        R.string.card_title_duration,
+                        getTimeInFormatWithSeconds(item.duration)
+                    )
+                    tv_folder.visibility = View.GONE
+                } else {
+                    card_view_record.background = getDrawable(item.folderBackground)
+                    val date = DateFormat.getDateInstance().format(item.creationDate)
+                    tv_record_name.text = getFromHtml(R.string.card_title_name, item.name)
+                    tv_date.text = getFromHtml(R.string.card_title_date, date)
+                    tv_duration.text = getFromHtml(
+                        R.string.card_title_duration,
+                        getTimeInFormatWithSeconds(item.duration)
+                    )
+                    tv_folder.text = getFromHtml(R.string.card_title_folder, item.folderName)
+                }
             }
 
         override fun onCreateContextMenu(
@@ -62,31 +78,6 @@ sealed class RecordDataViewHolder(override val containerView: View) :
                     .setOnMenuItemClickListener(menuItemClickListener)
             }
         }
-    }
-
-    class RecordFolderVersionHolder(override val containerView: View) :
-        RecordDataViewHolder(containerView) {
-
-        companion object {
-            fun from(parent: ViewGroup): RecordFolderVersionHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val view =
-                    layoutInflater.inflate(R.layout.item_record_folder_version, parent, false)
-                return RecordFolderVersionHolder(view)
-            }
-        }
-
-        fun bind(item: Record) =
-            with(containerView.context) {
-                val date = DateFormat.getDateInstance().format(item.creationDate)
-                tv_record_name.text = getFromHtml(R.string.card_title_name, item.name)
-                tv_date.text = getFromHtml(R.string.card_title_date, date)
-                tv_duration.text = getFromHtml(
-                    R.string.card_title_duration,
-                    getTimeInFormatWithSeconds(item.duration)
-                )
-            }
-
     }
 
     class HeaderHolder(override val containerView: View) : RecordDataViewHolder(containerView) {
@@ -132,7 +123,7 @@ sealed class RecordDataViewHolder(override val containerView: View) :
         fun bind(item: Folder) =
             with(item) {
                 containerView.setOnCreateContextMenuListener(this@FolderHolder)
-                card_view.background = containerView.context.getDrawable(background)
+                card_view_folder.background = containerView.context.getDrawable(background)
                 tv_name.text = name.toUpperCase()
             }
 

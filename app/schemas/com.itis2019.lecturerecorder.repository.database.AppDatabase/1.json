@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c76f434693a18880e491317fa17843bd",
+    "identityHash": "8d003e1c55e88f6e95d1c8c7386ed8a4",
     "entities": [
       {
         "tableName": "record_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `marks` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `filePath` TEXT NOT NULL, `folderName` TEXT NOT NULL, `folderBackground` INTEGER NOT NULL, `folderId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `marks` TEXT NOT NULL, `duration` INTEGER NOT NULL, `creationDate` INTEGER NOT NULL, `filePath` TEXT NOT NULL, `folderId` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -42,18 +42,6 @@
             "fieldPath": "filePath",
             "columnName": "filePath",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "folderName",
-            "columnName": "folderName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "folderBackground",
-            "columnName": "folderBackground",
-            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -114,7 +102,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c76f434693a18880e491317fa17843bd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8d003e1c55e88f6e95d1c8c7386ed8a4')"
     ]
   }
 }

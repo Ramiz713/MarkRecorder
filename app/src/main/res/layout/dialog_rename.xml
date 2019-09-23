@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:theme="@style/LightTheme.Dialog">
+    android:theme="@style/MarkRecorderTheme.Dialog">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ti_layout"

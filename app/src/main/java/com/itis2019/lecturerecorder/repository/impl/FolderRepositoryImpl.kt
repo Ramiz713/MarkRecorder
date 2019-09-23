@@ -14,7 +14,6 @@ class FolderRepositoryImpl(private val folderDao: FolderDao) : FolderRepository 
     override fun getAllFolders(): Observable<List<Folder>> =
         folderDao.getAll()
             .map { list -> list.map { it.convertToFolder() } }
-            .subscribeOn(Schedulers.io())
 
     override fun getFolder(id: Long): Single<Folder> =
         folderDao.getById(id)

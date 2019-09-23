@@ -15,6 +15,13 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical" />
 
+    <include
+        layout="@layout/explanation_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
@@ -27,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:elevation="0dp"
         android:src="@drawable/ic_add_24dp"
         app:backgroundTint="@color/colorPrimary"
         app:layout_anchor="@id/rv_folders"

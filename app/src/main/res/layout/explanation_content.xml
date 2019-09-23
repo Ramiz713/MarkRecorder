@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/explanation_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_emoji"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center_vertical"
+        android:letterSpacing="0.15"
+        android:padding="16dp"
+        android:text="@string/empty_folders_emoji"
+        android:textColor="@color/colorGray"
+        android:textSize="110sp" />
+
+    <TextView
+        android:id="@+id/tv_explanation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/empty_folders_explanation"
+        android:textColor="@color/colorGray"
+        android:textSize="20sp" />
+
+</LinearLayout>

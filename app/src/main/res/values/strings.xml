@@ -27,7 +27,6 @@
     <string name="card_title_date"><![CDATA[<b>Date:</b> %1$s]]></string>
     <string name="card_title_duration"><![CDATA[<b>Duration:</b> %1$s]]></string>
     <string name="create_folder">Folder creation</string>
-    <string name="edit_mark">Mark creation</string>
     <string name="choose_folder">Choose folder</string>
     <string name="records_count">%d records</string>
     <string name="hint_mark_name">Mark\'s name</string>
@@ -36,8 +35,16 @@
     <string name="now_playing_record_name"><![CDATA[Now playing:<br /><b>%1$s</b>]]></string>
     <string name="rename">Rename</string>
     <string name="delete">Delete</string>
+    <string name="rename_mark">Mark renaming</string>
     <string name="rename_record">Record renaming</string>
     <string name="rename_folder">Folder renaming</string>
     <string name="hint_record_rename">Record name</string>
     <string name="hint_folder_rename">Folder rename</string>
+    <string name="confirm_folder_delete">Confirm folder deleting</string>
+    <string name="folder_deleting_warning">Are you sure you want delete this folder? All records in folder also will be deleted</string>
+    <string name="empty_records_emoji">(·_·)</string>
+    <string name="empty_folders_emoji">(·.·)</string>
+    <string name="empty_records_explanation">You haven\'t made any record yet. Create record by tapping the button below</string>
+    <string name="empty_folders_explanation">You haven\'t folders! Change it by tapping the plus button below</string>
+    <string name="setting_empty">There is empty. This feature is not ready yet</string>
 </resources>

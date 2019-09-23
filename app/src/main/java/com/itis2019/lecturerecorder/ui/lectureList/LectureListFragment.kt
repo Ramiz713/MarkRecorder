@@ -20,6 +20,7 @@ import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
 import com.itis2019.lecturerecorder.utils.deleteFile
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.explanation_content.*
 import kotlinx.android.synthetic.main.fragment_lecture_list.*
 
 class LectureListFragment : BaseFragment(), FragmentInjectable {
@@ -39,7 +40,9 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        registerForContextMenu(rv_records)
+
+        tv_emoji.text = getString(R.string.empty_records_emoji)
+        tv_explanation.text = getString(R.string.empty_records_explanation)
 
         (record_lecture_button).setOnClickListener {
             runWithPermissions(
@@ -68,17 +71,15 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
             }
         })
 
-    private fun observeRecordDelete() {
-        viewModel.recordDeleting.observe(this, Observer {
-            it?.let { deleteFile(it) }
-        })
-    }
+    private fun observeRecordDelete() =
+        viewModel.recordDeleting.observe(this, Observer { it?.let { deleteFile(it) } })
 
     private fun observeRecordList() =
-        viewModel.getAllLectures().observe(this, Observer {
+        viewModel.getRecords().observe(this, Observer {
             (rv_records.adapter as RecordAdapter).submitList(
                 listOf(RecordDataItem.Header(getString(R.string.title_recent_records))) + it
             )
+            explanation_content.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         })
 
     private fun initRecycler() {
@@ -86,6 +87,7 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
         rv_records.adapter =
             RecordAdapter({ id: Long -> viewModel.openLecture(this, id) }, menuItemClickListener)
         rv_records.layoutManager = manager
+        registerForContextMenu(rv_records)
         rv_records.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -95,8 +97,7 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
                     return
                 }
                 val firstItem = manager.findFirstCompletelyVisibleItemPosition()
-                if (firstItem == 0)
-                    (record_lecture_button).extend()
+                if (firstItem == 0) (record_lecture_button).extend()
             }
         })
 

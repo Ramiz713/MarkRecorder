@@ -63,8 +63,7 @@ class RecordingFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        horizon =
-            Horizon(visualizer, resources.getColor(R.color.colorText), 44100, 1, 16)
+        horizon = Horizon(visualizer, resources.getColor(R.color.colorText), 44100, 1, 16)
         disableButtons()
     }
 
@@ -115,7 +114,7 @@ class RecordingFragment : BaseFragment() {
         if (!bound) return
         observeIsPlaying()
         observeNavigateToLectureConfig()
-        observeMarkCreation()
+        observeMarkRename()
         observeMarkList()
         btn_play_pause.setOnClickListener { viewModel.playPauseBtnClicked() }
         btn_stop.setOnClickListener { viewModel.stopBtnClicked() }
@@ -127,7 +126,7 @@ class RecordingFragment : BaseFragment() {
         viewModel.isPlaying().observe(viewLifecycleOwner, Observer {
             btn_play_pause.setImageDrawable(
                 if (it) activity?.getDrawable(R.drawable.ic_pause_24dp)
-                else activity?.getDrawable(R.drawable.ic_play_24dp)
+                else activity?.getDrawable(R.drawable.ic_record)
             )
             if (isInitialState) {
                 initFlowableData()
@@ -163,12 +162,12 @@ class RecordingFragment : BaseFragment() {
             findNavController(this).navigate(action)
         })
 
-    private fun observeMarkCreation() =
-        viewModel.showMarkCreationDialog.observe(viewLifecycleOwner, Observer { mark ->
+    private fun observeMarkRename() =
+        viewModel.showMarkRenameDialog.observe(viewLifecycleOwner, Observer { mark ->
             mark?.let {
                 fragmentManager?.let {
                     MarkRenameDialog.newInstance(mark)
-                        .show(it, getString(R.string.mark_name_edit))
+                        .show(childFragmentManager, getString(R.string.mark_name_edit))
                 }
             }
         })
@@ -190,8 +189,7 @@ class RecordingFragment : BaseFragment() {
 
     private fun initRecycler() {
         rv_marks.layoutManager = LinearLayoutManager(activity)
-        val editListener =
-            { mark: Mark -> viewModel.markEditClicked(mark) }
+        val editListener = { mark: Mark -> viewModel.markEditClicked(mark) }
         val deleteListener = { mark: Mark -> viewModel.deleteMark(mark) }
         rv_marks.adapter = MarkAdapter(editListener = editListener, deleteListener = deleteListener)
     }

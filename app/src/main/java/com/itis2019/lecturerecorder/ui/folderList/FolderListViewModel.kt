@@ -5,20 +5,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.repository.FolderRepository
+import com.itis2019.lecturerecorder.repository.RecordRepository
 import com.itis2019.lecturerecorder.router.Router
 import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class FolderListViewModel @Inject constructor(
-    private val repository: FolderRepository,
+    private val folderRepository: FolderRepository,
+    private val recordRepository: RecordRepository,
     private val router: Router
 ) : BaseViewModel() {
 
     init {
-        disposables.add(repository.getAllFolders()
+        disposables.add(
+            folderRepository.getAllFolders()
             .map { it.map { folder -> RecordDataItem.FolderItem(folder) } }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { loadingData.setValue(true) }
@@ -31,6 +35,9 @@ class FolderListViewModel @Inject constructor(
 
     private var folders = MutableLiveData<List<RecordDataItem.FolderItem>>()
     fun getFolders(): LiveData<List<RecordDataItem.FolderItem>> = folders
+
+    private val recordDeleteEvent = SingleLiveEvent<String>()
+    val recordDeleting: LiveData<String?> = recordDeleteEvent
 
     private val folderCreationDialog = SingleLiveEvent<Any>()
 
@@ -48,21 +55,37 @@ class FolderListViewModel @Inject constructor(
     fun openFolder(fragment: Fragment, id: Long) = router.openFolder(fragment, id)
 
     fun createFolder(folder: Folder) =
-        disposables.add(repository.insertFolder(folder)
+        disposables.add(
+            folderRepository.insertFolder(folder)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { errorData.value = it }
             .subscribe()
         )
 
     fun deleteFolder(folder: Folder) =
-        disposables.add(repository.deleteFolder(folder)
+        disposables.add(folderRepository.deleteFolder(folder)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError { errorData.value = it }
+            .subscribe { deleteFolderRecords(folder) }
+        )
+
+    fun updateFolder(folder: Folder) =
+        disposables.add(
+            folderRepository.updateFolder(folder)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { errorData.value = it }
             .subscribe()
         )
 
-    fun updateFolder(folder: Folder) =
-        disposables.add(repository.updateFolder(folder)
+    private fun deleteFolderRecords(folder: Folder) =
+        disposables.add(recordRepository.getRecordsFromFolder(folder.id)
+            .flatMap { Observable.fromIterable(it) }
+            .observeOn(AndroidSchedulers.mainThread())
+            .map {
+                recordDeleteEvent.value = it.filePath
+                it
+            }
+            .flatMap { recordRepository.deleteRecord(it) }
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { errorData.value = it }
             .subscribe()

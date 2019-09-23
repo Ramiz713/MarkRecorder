@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         android:lines="2"
+        android:ellipsize="end"
         android:text="@string/now_playing_record_name"
         android:textColor="@color/colorText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,8 +27,9 @@
         custom:layout_constraintTop_toBottomOf="@id/tv_record_name"
         app:layout_constraintBottom_toTopOf="@id/tv_mark_title"
         custom:avColor="@color/colorPrimary"
-        custom:avSpeed="fast"
-        custom:avType="outline"
+        custom:avDensity="1"
+        custom:avSpeed="medium"
+        custom:avType="fill"
         custom:layout_constraintEnd_toEndOf="parent"
         custom:layout_constraintStart_toStartOf="parent" />
 
@@ -58,7 +60,7 @@
         android:padding="8dp"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@id/line_bottom"
+        app:layout_constraintBottom_toTopOf="@id/seek_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_mark_title"
@@ -72,7 +74,23 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_marks"
-        app:layout_constraintVertical_bias="0.45" />
+        app:layout_constraintVertical_bias="1" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_mark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/gradient_red"
+        android:src="@drawable/ic_flag_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/btn_play_pause"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/btn_play_pause"
+        app:layout_constraintTop_toTopOf="@id/btn_play_pause"
+        app:tint="@android:color/white" />
 
     <ImageView
         android:id="@+id/btn_play_pause"
@@ -85,9 +103,25 @@
         android:tint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/btn_mark"
+        app:layout_constraintRight_toLeftOf="@id/btn_change_and_save"
         app:layout_constraintTop_toTopOf="@id/line_bottom" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_change_and_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_check_24dp"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/btn_play_pause"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintLeft_toRightOf="@id/btn_play_pause"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btn_play_pause"
+        app:tint="@android:color/white" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/line_bottom"

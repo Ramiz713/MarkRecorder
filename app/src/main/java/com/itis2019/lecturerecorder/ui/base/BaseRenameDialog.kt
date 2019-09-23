@@ -35,7 +35,7 @@ abstract class BaseRenameDialog<T> : DialogFragment()
         val inflater = activity?.layoutInflater
         val view = inflater?.inflate(R.layout.dialog_rename, null)
         val dialog = builder.setView(view)
-            .setTitle(R.string.rename_record)
+            .setTitle(dialogTitle)
             .setPositiveButton(R.string.ok, null)
             .setNegativeButton(R.string.cancel, null)
             .create()

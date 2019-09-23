@@ -1,7 +1,6 @@
 package com.itis2019.lecturerecorder.ui.folderList
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Folder
 import com.itis2019.lecturerecorder.ui.base.BaseRenameDialog
@@ -22,11 +21,10 @@ class FolderRenameDialog : BaseRenameDialog<Folder>() {
 
     override val hintStringResId = R.string.hint_folder_rename
 
-    override val dialogTitle = R.string.edit_mark
+    override val dialogTitle = R.string.rename_folder
 
     override fun injectViewModel() {
-        val fragment = parentFragment ?: Fragment()
-        viewModel = (fragment).injectViewModel(viewModelFactory)
+        parentFragment?.let { viewModel = it.injectViewModel(viewModelFactory) }
     }
 
     override fun updateItem(item: Folder, name: String) {

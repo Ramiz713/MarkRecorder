@@ -85,11 +85,14 @@ class ListeningFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.fragment_listening, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_listening, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        btn_mark.run {
+            isEnabled = false
+            alpha = 0.5f
+        }
         initRecycler()
         initListeners()
     }
@@ -101,10 +104,12 @@ class ListeningFragment : BaseFragment() {
         observeMarkList()
         observeSeekWithTimecode()
         observeIsPlaying()
+        observeMarkRename()
+        btn_mark.setOnClickListener { viewModel.insertMark() }
     }
 
     private fun observeRecord() =
-        viewModel.getLecture().observe(this, Observer {
+        viewModel.getRecord().observe(this, Observer {
             service.setDataSource(it.filePath)
             seek_bar.max = service.getDuration()
             blast.setAudioSessionId(service.getAudioSessionId())
@@ -122,6 +127,10 @@ class ListeningFragment : BaseFragment() {
                 activity?.run {
                     startService(Intent(this, AudioPlayerService::class.java))
                 }
+                btn_mark.run {
+                    isEnabled = true
+                    alpha = 1f
+                }
                 observeCurrentTime()
                 isInitialState = false
                 service.play()
@@ -134,11 +143,14 @@ class ListeningFragment : BaseFragment() {
     private fun observeCurrentTime() =
         viewModel.getCurrentData().observe(this, Observer {
             seek_bar.progress = it
+            if (seek_bar.max != it) return@Observer
+            seek_bar.progress = 0
+            viewModel.playPauseBtnClicked()
         })
 
     private fun observeMarkList() =
         viewModel.getMarks().observe(this, Observer {
-            (rv_marks.adapter as MarkAdapter).submitList(it)
+            (rv_marks.adapter as MarkAdapter).submitList(it.reversed())
         })
 
     private fun observeSeekWithTimecode() =
@@ -146,12 +158,26 @@ class ListeningFragment : BaseFragment() {
             time?.let { service.seekTo(time) }
         })
 
+    private fun observeMarkRename() =
+        viewModel.showMarkRenameDialog.observe(viewLifecycleOwner, Observer { mark ->
+            mark?.let {
+                fragmentManager?.let {
+                    ListeningMarkRenameDialog.newInstance(mark)
+                        .show(childFragmentManager, getString(R.string.mark_name_edit))
+                }
+            }
+        })
+
     private fun initRecycler() {
         rv_marks.layoutManager = LinearLayoutManager(activity)
-        rv_marks.adapter =
-            MarkAdapter(clickListener = { mark: Mark -> viewModel.markItemClicked(mark.time) })
-//        val itemDecoration = DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
-//        rv_marks.addItemDecoration(itemDecoration)
+        val clickListener = { mark: Mark -> viewModel.markItemClicked(mark.time) }
+        val editListener = { mark: Mark -> viewModel.markEditClicked(mark) }
+        val deleteListener = { mark: Mark -> viewModel.deleteMark(mark) }
+        rv_marks.adapter = MarkAdapter(
+            clickListener = clickListener,
+            deleteListener = deleteListener,
+            editListener = editListener
+        )
     }
 
     private fun initListeners() {
@@ -168,15 +194,12 @@ class ListeningFragment : BaseFragment() {
         }
         seek_bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    service.seekTo(progress.toLong())
-                }
+                if (fromUser) service.seekTo(progress.toLong())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
 
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
 }
