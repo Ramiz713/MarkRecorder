@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_lectures"
-        android:name="com.itis2019.lecturerecorder.ui.lectureList.LectureListFragment"
+        android:name="com.itis2019.markrecorder.ui.recordList.RecordListFragment"
         android:label="fragment_lecture_list"
         tools:layout="@layout/fragment_lecture_list">
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/navigation_folders"
-        android:name="com.itis2019.lecturerecorder.ui.folderList.FolderListFragment"
+        android:name="com.itis2019.markrecorder.ui.folderList.FolderListFragment"
         android:label="fragment_folder_list"
         tools:layout="@layout/fragment_folder_list" >
         <action
@@ -42,12 +42,12 @@
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.itis2019.lecturerecorder.ui.settings.SettingsFragment"
+        android:name="com.itis2019.markrecorder.ui.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/recordingFragment"
-        android:name="com.itis2019.lecturerecorder.ui.recorder.recording.RecordingFragment"
+        android:name="com.itis2019.markrecorder.ui.recorder.recording.RecordingFragment"
         android:label="recording_fragment"
         tools:layout="@layout/fragment_recording">
         <action
@@ -62,12 +62,12 @@
     </fragment>
     <fragment
         android:id="@+id/lectureConfigFragment"
-        android:name="com.itis2019.lecturerecorder.ui.recorder.lectureConfig.LectureConfigFragment"
+        android:name="com.itis2019.markrecorder.ui.recorder.lectureConfig.RecordConfigFragment"
         android:label="lecture_config_fragment"
         tools:layout="@layout/fragment_lecture_config">
         <argument
             android:name="record"
-            app:argType="com.itis2019.lecturerecorder.entities.Record" />
+            app:argType="com.itis2019.markrecorder.entities.Record" />
         <action
             android:id="@+id/action_lectureConfigFragment_to_navigation_lectures"
             app:destination="@id/navigation_lectures"
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/listeningFragment"
-        android:name="com.itis2019.lecturerecorder.ui.listener.ListeningFragment"
+        android:name="com.itis2019.markrecorder.ui.listener.ListeningFragment"
         android:label="fragment_listening"
         tools:layout="@layout/fragment_listening">
         <argument
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/folderInfoFragment"
-        android:name="com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoFragment"
+        android:name="com.itis2019.markrecorder.ui.folderInfo.FolderInfoFragment"
         android:label="FolderInfoFragment">
         <argument
             android:name="folderId"

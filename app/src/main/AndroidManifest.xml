@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.itis2019.lecturerecorder">
+    package="com.itis2019.markrecorder">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".App"
+        android:name="com.itis2019.markrecorder.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +16,7 @@
         android:theme="@style/MarkRecorderTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="com.itis2019.markrecorder.ui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/MarkRecorderTheme.Launcher">
@@ -27,8 +27,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.audioRecording.AudioRecordService" />
-        <service android:name=".service.audioPlayer.AudioPlayerService" />
+        <service android:name="com.itis2019.markrecorder.service.audioRecording.AudioRecordService" />
+        <service android:name="com.itis2019.markrecorder.service.audioPlayer.AudioPlayerService" />
     </application>
 
 </manifest>
