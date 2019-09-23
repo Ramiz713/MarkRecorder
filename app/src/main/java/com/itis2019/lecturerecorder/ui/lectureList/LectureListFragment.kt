@@ -3,6 +3,7 @@ package com.itis2019.lecturerecorder.ui.lectureList
 import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
@@ -12,10 +13,14 @@ import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
 import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
+import com.itis2019.lecturerecorder.utils.MENU_DELETE
+import com.itis2019.lecturerecorder.utils.MENU_RENAME
 import com.itis2019.lecturerecorder.utils.dagger.FragmentInjectable
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.deleteFile
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.android.synthetic.main.explanation_content.*
 import kotlinx.android.synthetic.main.fragment_lecture_list.*
 
 class LectureListFragment : BaseFragment(), FragmentInjectable {
@@ -36,6 +41,9 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
 
+        tv_emoji.text = getString(R.string.empty_records_emoji)
+        tv_explanation.text = getString(R.string.empty_records_explanation)
+
         (record_lecture_button).setOnClickListener {
             runWithPermissions(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -47,21 +55,39 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
     }
 
     override fun initObservers() {
-        observeLectureList()
+        observeRecordList()
         observeLoading(progress_bar)
+        observeRecordDelete()
+        observeRecordRenaming()
     }
 
-    private fun observeLectureList() =
-        viewModel.getAllLectures().observe(this, Observer {
+    private fun observeRecordRenaming() =
+        viewModel.showRecordNameEditDialog.observe(this, Observer { record ->
+            record?.let {
+                fragmentManager?.let {
+                    RecordRenameDialog.newInstance(record)
+                        .show(childFragmentManager, "RecordCreationFragment")
+                }
+            }
+        })
+
+    private fun observeRecordDelete() =
+        viewModel.recordDeleting.observe(this, Observer { it?.let { deleteFile(it) } })
+
+    private fun observeRecordList() =
+        viewModel.getRecords().observe(this, Observer {
             (rv_records.adapter as RecordAdapter).submitList(
                 listOf(RecordDataItem.Header(getString(R.string.title_recent_records))) + it
             )
+            explanation_content.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         })
 
     private fun initRecycler() {
         val manager = LinearLayoutManager(activity)
-        rv_records.adapter = RecordAdapter { id: Long -> viewModel.openLecture(this, id) }
+        rv_records.adapter =
+            RecordAdapter({ id: Long -> viewModel.openLecture(this, id) }, menuItemClickListener)
         rv_records.layoutManager = manager
+        registerForContextMenu(rv_records)
         rv_records.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -71,8 +97,7 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
                     return
                 }
                 val firstItem = manager.findFirstCompletelyVisibleItemPosition()
-                if (firstItem == 0)
-                    (record_lecture_button).extend()
+                if (firstItem == 0) (record_lecture_button).extend()
             }
         })
 
@@ -81,6 +106,22 @@ class LectureListFragment : BaseFragment(), FragmentInjectable {
             val top: Int = insets.systemWindowInsetTop + paddingTop
             v.setPadding(v.paddingStart, top, v.paddingEnd, v.paddingBottom)
             insets
+        }
+    }
+
+    private val menuItemClickListener = MenuItem.OnMenuItemClickListener { menuItem ->
+        val item = (rv_records.adapter as RecordAdapter)
+            .currentList[menuItem.groupId] as RecordDataItem.RecordItem
+        when (menuItem.itemId) {
+            MENU_RENAME -> {
+                viewModel.renameMenuItemClicked(item.record)
+                true
+            }
+            MENU_DELETE -> {
+                viewModel.deleteRecord(item.record)
+                true
+            }
+            else -> false
         }
     }
 }

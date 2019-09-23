@@ -1,4 +1,4 @@
-package com.itis2019.lecturerecorder.service.AudioRecording
+package com.itis2019.lecturerecorder.service.audioRecording
 
 import android.app.PendingIntent
 import android.app.Service
@@ -31,7 +31,9 @@ class AudioRecordService : Service(), AudioRecorder {
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
         val notification = NotificationCompat.Builder(this, RECORDING_CHANNEL_ID)
             .setContentTitle("Recording...")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSound(null)
+            .setColor(this.resources.getColor(R.color.colorPrimary))
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .build()
         startForeground(1, notification)

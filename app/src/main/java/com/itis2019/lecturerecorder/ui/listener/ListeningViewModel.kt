@@ -5,16 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import com.itis2019.lecturerecorder.entities.Mark
 import com.itis2019.lecturerecorder.entities.Record
 import com.itis2019.lecturerecorder.repository.RecordRepository
-import com.itis2019.lecturerecorder.ui.base.BaseViewModel
+import com.itis2019.lecturerecorder.ui.base.BasePlayRecordViewModel
 import com.itis2019.lecturerecorder.utils.vm.SingleLiveEvent
 import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class ListeningViewModel @Inject constructor(
     private val lectureRepository: RecordRepository
-) : BaseViewModel() {
+) : BasePlayRecordViewModel() {
 
     fun setDataSource(currentTimeFlowable: Flowable<Int>) {
         disposables.add(
@@ -27,40 +29,72 @@ class ListeningViewModel @Inject constructor(
         )
     }
 
-    private val marksData = MutableLiveData<List<Mark>>()
-    private val isPlayingData = MutableLiveData<Boolean>()
     private val recordData = MutableLiveData<Record>()
     private val markItemClickedData = SingleLiveEvent<Long>()
     private val currentTimeData = MutableLiveData<Int>()
 
-    fun isPlaying(): LiveData<Boolean> = isPlayingData
+    val seekWithTimecode: LiveData<Long?> = markItemClickedData
 
-    fun getLecture(): LiveData<Record> = recordData
-
-    fun getMarks(): LiveData<List<Mark>> = marksData
+    fun getRecord(): LiveData<Record> = recordData
 
     fun getCurrentData(): LiveData<Int> = currentTimeData
-
-    val seekWithTimecode: LiveData<Long?> = markItemClickedData
 
     fun markItemClicked(time: Long) {
         markItemClickedData.value = time
     }
 
-    fun playPauseBtnClicked() {
-        isPlayingData.value = isPlayingData.value?.not() ?: true
-    }
-
     @Suppress("CheckResult")
     fun loadRecord(recordId: Long) {
         lectureRepository.getRecord(recordId)
-            .doOnSubscribe { disposables.add(it) }
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { disposables.add(it) }
             .subscribe(
                 { item ->
                     recordData.value = item
                     marksData.value = item.marks
+                    if (item.marks.isNotEmpty())
+                        markId = item.marks.last().id
                 },
                 { error -> errorData.value = error })
+    }
+
+    override fun insertMark() {
+        getCurrentData().value?.let { timeCode ->
+            Single.just(Mark(markId++, "", timeCode.toLong()))
+                .doOnSubscribe { disposables.add(it) }
+                .map {
+                    val list = marksData.value?.toMutableList() ?: mutableListOf()
+                    list.add(it)
+                    list
+                }
+
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy { marksData.value = it }
+        }
+    }
+
+    override fun updateMark(mark: Mark) {
+        recordData.value?.let { record ->
+            marksData.value?.toMutableList()?.let { marks ->
+                val updatedMarks = marks.map { if (it.id == mark.id) mark else it }
+                disposables.add(lectureRepository
+                    .updateRecord(record.copy(marks = updatedMarks))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { marksData.value = updatedMarks })
+            }
+        }
+    }
+
+    override fun deleteMark(mark: Mark) {
+        recordData.value?.let { record ->
+            marksData.value?.toMutableList()?.let { marks ->
+                marks.remove(mark)
+                disposables.add(lectureRepository
+                    .updateRecord(record.copy(marks = marks))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { marksData.value = marks })
+            }
+        }
     }
 }

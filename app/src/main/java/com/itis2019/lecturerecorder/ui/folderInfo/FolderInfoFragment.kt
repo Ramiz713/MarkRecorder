@@ -3,6 +3,7 @@ package com.itis2019.lecturerecorder.ui.folderInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
@@ -10,8 +11,13 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.ui.adapters.RecordAdapter
+import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
 import com.itis2019.lecturerecorder.ui.base.BaseFragment
+import com.itis2019.lecturerecorder.ui.lectureList.RecordRenameDialog
+import com.itis2019.lecturerecorder.utils.MENU_DELETE
+import com.itis2019.lecturerecorder.utils.MENU_RENAME
 import com.itis2019.lecturerecorder.utils.dagger.injectViewModel
+import com.itis2019.lecturerecorder.utils.deleteFile
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.fragment_folder_info.*
 
@@ -27,18 +33,17 @@ class FolderInfoFragment : BaseFragment() {
     override fun initViewModel() {
         AndroidSupportInjection.inject(this)
         viewModel = injectViewModel(viewModelFactory)
+        viewModel.getFolder(args.folderId)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? =
-        inflater.inflate(R.layout.fragment_folder_info, container, false)
+    ): View? = inflater.inflate(R.layout.fragment_folder_info, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecycler()
-        viewModel.getFolder(args.folderId)
     }
 
     override fun onStart() {
@@ -64,6 +69,8 @@ class FolderInfoFragment : BaseFragment() {
         observeLoading(progress_bar)
         observeFolder()
         observeLectures()
+        observeRecordRenaming()
+        observeRecordDelete()
     }
 
     private fun observeFolder() {
@@ -73,19 +80,51 @@ class FolderInfoFragment : BaseFragment() {
     }
 
     private fun observeLectures() =
-        viewModel.getLectures().observe(this, Observer {
+        viewModel.getRecords().observe(this, Observer {
             (rv_records.adapter as RecordAdapter).submitList(it)
         })
 
+    private fun observeRecordRenaming() =
+        viewModel.showRecordNameEditDialog.observe(this, Observer { record ->
+            record?.let {
+                fragmentManager?.let {
+                    RecordRenameDialog.newInstance(record)
+                        .show(childFragmentManager, "RecordCreationFragment")
+                }
+            }
+        })
+
+    private fun observeRecordDelete() {
+        viewModel.recordDeleting.observe(this, Observer { it?.let { deleteFile(it) } })
+    }
+
     private fun initRecycler() {
         rv_records.layoutManager = LinearLayoutManager(activity)
-        rv_records.adapter = RecordAdapter { id: Long -> viewModel.openRecordFromFolder(this, id) }
-
+        rv_records.adapter = RecordAdapter(
+            { id: Long -> viewModel.openRecordFromFolder(this, id) },
+            menuItemClickListener
+        )
         val paddingTop = rv_records.paddingTop
         rv_records.setOnApplyWindowInsetsListener { v, insets ->
             val top: Int = insets.systemWindowInsetTop + paddingTop
             v.setPadding(v.paddingStart, top, v.paddingEnd, v.paddingBottom)
             insets
+        }
+    }
+
+    private val menuItemClickListener = MenuItem.OnMenuItemClickListener { menuItem ->
+        val item = (rv_records.adapter as RecordAdapter)
+            .currentList[menuItem.groupId] as RecordDataItem.RecordItem
+        when (menuItem.itemId) {
+            MENU_RENAME -> {
+                viewModel.renameMenuItemClicked(item.record)
+                true
+            }
+            MENU_DELETE -> {
+                viewModel.deleteRecord(item.record)
+                true
+            }
+            else -> false
         }
     }
 }

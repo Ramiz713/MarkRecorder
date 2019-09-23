@@ -16,9 +16,8 @@ class RecordRepositoryImpl(private val recordDao: RecordDao) : RecordRepository 
             .map { list -> list.map { it.convertToRecord() } }
 
     override fun getRecordsFromFolder(folderId: Long): Observable<List<Record>> =
-        recordDao.getLectures(folderId)
+        recordDao.getRecordsByFolderId(folderId)
             .map { list -> list.map { it.convertToRecord() } }
-            .subscribeOn(Schedulers.io())
 
     override fun getRecord(id: Long): Single<Record> =
         recordDao.getById(id)
@@ -26,7 +25,7 @@ class RecordRepositoryImpl(private val recordDao: RecordDao) : RecordRepository 
             .subscribeOn(Schedulers.io())
 
     override fun updateRecord(lecture: Record): Observable<Unit> =
-        Observable.fromCallable { recordDao.updateLecture(lecture.convertToDbRecord()) }
+        Observable.fromCallable { recordDao.update(lecture.convertToDbRecord()) }
             .subscribeOn(Schedulers.io())
 
     override fun insertRecord(lecture: Record): Observable<Long> =

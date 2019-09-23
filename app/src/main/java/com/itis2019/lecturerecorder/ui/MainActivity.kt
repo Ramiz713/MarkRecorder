@@ -1,5 +1,6 @@
 package com.itis2019.lecturerecorder.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -15,13 +16,16 @@ class MainActivity : DiActivity() {
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.LectureRecorderTheme)
+        setTheme(R.style.MarkRecorderTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         this.window?.apply {
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-            decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                decorView.systemUiVisibility =
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
 
         navController = Navigation.findNavController(this, R.id.host_fragment)
@@ -29,26 +33,10 @@ class MainActivity : DiActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.navigation_lectures -> {
-                    showBottomNav()
-//                    hidePlus()
-//                    showExtend()
-                }
-                R.id.navigation_folders -> {
-                    showBottomNav()
-//                    hideExtend()
-//                    showPlus()
-                }
-                R.id.navigation_settings -> {
-                    showBottomNav()
-//                    hideExtend()
-//                    hidePlus()
-                }
-                else -> {
-                    hideBottomNav()
-//                    hideExtend()
-//                    hidePlus()
-                }
+                R.id.navigation_lectures -> showBottomNav()
+                R.id.navigation_folders -> showBottomNav()
+                R.id.navigation_settings -> showBottomNav()
+                else -> hideBottomNav()
             }
         }
     }
@@ -56,27 +44,4 @@ class MainActivity : DiActivity() {
     private fun showBottomNav() = with(bottom_nav) { visibility = View.VISIBLE }
 
     private fun hideBottomNav() = with(bottom_nav) { visibility = View.GONE }
-
-//    private fun showExtend() = with(record_lecture_button) {
-//        show(true)
-//        extend(true)
-//    }
-//
-//    private fun hideExtend() = with(record_lecture_button) {
-//        shrink(true)
-//        hide(true)
-//    }
-//
-//    private fun showPlus() = with(add_folder_button) { show() }
-//    private fun hidePlus() = with(add_folder_button) { hide() }
-//
-//    fun setOnClickListenerToRecordLectureButton(function: () -> Unit) =
-//        record_lecture_button.setOnClickListener { function() }
-//
-//    fun setOnClickListenerToAddFolderButton(function: () -> Unit) =
-//        add_folder_button.setOnClickListener { function() }
-//
-//    fun shrinkRecordLectureButton() = record_lecture_button.shrink(true)
-//
-//    fun extendRecordLectureButton() = record_lecture_button.extend(true)
 }

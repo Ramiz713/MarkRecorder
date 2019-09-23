@@ -12,9 +12,9 @@ interface RecordRepository {
 
     fun getRecord(id: Long): Single<Record>
 
-    fun updateRecord(lecture: Record): Observable<Unit>
+    fun updateRecord(record: Record): Observable<Unit>
 
-    fun insertRecord(lecture: Record): Observable<Long>
+    fun insertRecord(record: Record): Observable<Long>
 
-    fun deleteRecord(lecture: Record): Observable<Unit>
+    fun deleteRecord(record: Record): Observable<Unit>
 }

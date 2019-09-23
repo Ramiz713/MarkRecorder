@@ -13,13 +13,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/LectureRecorderTheme"
+        android:theme="@style/MarkRecorderTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/LectureRecorderTheme.Launcher">
+            android:theme="@style/MarkRecorderTheme.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +27,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.AudioRecording.AudioRecordService" />
-        <service android:name=".service.AudioPlayer.AudioPlayerService" />
+        <service android:name=".service.audioRecording.AudioRecordService" />
+        <service android:name=".service.audioPlayer.AudioPlayerService" />
     </application>
 
 </manifest>

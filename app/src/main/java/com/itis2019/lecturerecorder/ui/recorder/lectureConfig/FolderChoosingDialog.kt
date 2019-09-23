@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.itis2019.lecturerecorder.R
 import com.itis2019.lecturerecorder.entities.Folder
@@ -21,10 +20,8 @@ class FolderChoosingDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         AndroidSupportInjection.inject(this)
-        val fragment =
-            parentFragment?.childFragmentManager?.fragments?.find { it is LectureConfigFragment }
-                ?: Fragment()
-        viewModel = (fragment).injectViewModel(viewModelFactory)
+        parentFragment?.let { viewModel = it.injectViewModel(viewModelFactory) }
+
         val folders = viewModel.getFolders().value ?: listOf()
         val foldersName = folders.map { it.name }.toMutableList()
         var selectedFolder: Folder? = null

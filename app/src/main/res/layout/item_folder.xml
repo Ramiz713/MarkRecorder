@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/gradient_yellow"
     app:cardCornerRadius="16dp"
-    app:cardElevation="8dp">
+    android:background="@drawable/gradient_yellow"
+    app:cardElevation="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/card_view"
+        android:id="@+id/card_view_folder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

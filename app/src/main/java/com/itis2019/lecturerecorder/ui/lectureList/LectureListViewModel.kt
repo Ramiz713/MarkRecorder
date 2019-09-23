@@ -1,19 +1,17 @@
 package com.itis2019.lecturerecorder.ui.lectureList
 
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.itis2019.lecturerecorder.repository.RecordRepository
 import com.itis2019.lecturerecorder.router.Router
 import com.itis2019.lecturerecorder.ui.adapters.RecordDataItem
-import com.itis2019.lecturerecorder.ui.base.BaseViewModel
+import com.itis2019.lecturerecorder.ui.base.BaseLectureListViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class LectureListViewModel @Inject constructor(
-    private val repository: RecordRepository,
+    repository: RecordRepository,
     private val router: Router
-) : BaseViewModel() {
+) : BaseLectureListViewModel(repository) {
 
     init {
         disposables.add(repository.getAllRecords()
@@ -27,11 +25,7 @@ class LectureListViewModel @Inject constructor(
             ))
     }
 
-    private var records = MutableLiveData<List<RecordDataItem.RecordItem>>()
-
     fun openLectureRecorder(fragment: Fragment) = router.openRecordingFragment(fragment)
 
     fun openLecture(fragment: Fragment, id: Long) = router.openRecord(fragment, id)
-
-    fun getAllLectures(): LiveData<List<RecordDataItem.RecordItem>> = records
 }

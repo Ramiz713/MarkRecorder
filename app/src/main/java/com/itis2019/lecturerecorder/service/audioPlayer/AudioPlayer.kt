@@ -1,10 +1,8 @@
-package com.itis2019.lecturerecorder.service.AudioPlayer
+package com.itis2019.lecturerecorder.service.audioPlayer
 
 import io.reactivex.Flowable
 
 interface AudioPlayer {
-
-    fun stop()
 
     fun pause()
 

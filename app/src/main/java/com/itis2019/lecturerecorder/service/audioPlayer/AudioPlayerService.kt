@@ -1,4 +1,4 @@
-package com.itis2019.lecturerecorder.service.AudioPlayer
+package com.itis2019.lecturerecorder.service.audioPlayer
 
 import android.app.PendingIntent
 import android.app.Service
@@ -21,6 +21,11 @@ class AudioPlayerService : Service(), AudioPlayer {
         fun getService(): AudioPlayerService = this@AudioPlayerService
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        mediaPlayer = MediaPlayer()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val intent = Intent(this, MainActivity::class.java)
         intent.action = Intent.ACTION_MAIN
@@ -29,7 +34,9 @@ class AudioPlayerService : Service(), AudioPlayer {
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
         val notification = NotificationCompat.Builder(this, App.PLAYING_CHANNEL_ID)
             .setContentTitle("Playing...")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSound(null)
+            .setColor(this.resources.getColor(R.color.colorPrimary))
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .build()
         startForeground(1, notification)
@@ -41,20 +48,19 @@ class AudioPlayerService : Service(), AudioPlayer {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.stop()
+        stop()
         stopForeground(true)
     }
 
-    private val mediaPlayer = MediaPlayer()
+    private lateinit var mediaPlayer: MediaPlayer
 
-    private var isStopped = true
+    private var isNotStopped = true
+    private var isNotPaused = false
 
-    override fun stop() {
-        isStopped = false
-        mediaPlayer.stop()
+    override fun pause() {
+        mediaPlayer.pause()
+//        isNotPaused = false
     }
-
-    override fun pause() = mediaPlayer.pause()
 
     override fun setDataSource(path: String) {
         mediaPlayer.setDataSource(path)
@@ -64,6 +70,8 @@ class AudioPlayerService : Service(), AudioPlayer {
 
     override fun play() {
         mediaPlayer.start()
+        isNotStopped = true
+        isNotPaused = true
     }
 
     override fun seekTo(progress: Long) {
@@ -72,15 +80,22 @@ class AudioPlayerService : Service(), AudioPlayer {
 
     override fun getCurrentListeningTime(): Flowable<Int> =
         Flowable.create({ emitter ->
-            while (isStopped) {
+            while (isNotStopped) {
                 if (mediaPlayer.isPlaying) {
                     val time = mediaPlayer.currentPosition
                     emitter.onNext(time)
                 }
             }
+            mediaPlayer.release()
+            emitter.onComplete()
         }, BackpressureStrategy.DROP)
 
     override fun getDuration(): Int = mediaPlayer.duration
 
     override fun getAudioSessionId(): Int = mediaPlayer.audioSessionId
+
+    private fun stop() {
+        isNotStopped = false
+        mediaPlayer.stop()
+    }
 }

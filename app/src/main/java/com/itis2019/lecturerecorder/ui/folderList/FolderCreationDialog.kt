@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.itis2019.lecturerecorder.R
@@ -25,7 +24,7 @@ class FolderCreationDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         AndroidSupportInjection.inject(this)
-        viewModel = (parentFragment as Fragment).injectViewModel(viewModelFactory)
+        parentFragment?.let { viewModel = it.injectViewModel(viewModelFactory) }
 
         val builder = AlertDialog.Builder(activity)
         val inflater = activity?.layoutInflater

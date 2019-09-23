@@ -1,4 +1,4 @@
-package com.itis2019.lecturerecorder.service.AudioRecording
+package com.itis2019.lecturerecorder.service.audioRecording
 
 import android.media.AudioFormat
 import android.media.AudioRecord

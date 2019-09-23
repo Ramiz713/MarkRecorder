@@ -2,6 +2,7 @@ package com.itis2019.lecturerecorder.di.module
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.itis2019.lecturerecorder.ui.base.BaseLectureListViewModel
 import com.itis2019.lecturerecorder.ui.folderInfo.FolderInfoViewModel
 import com.itis2019.lecturerecorder.ui.folderList.FolderListViewModel
 import com.itis2019.lecturerecorder.ui.lectureList.LectureListViewModel
@@ -51,4 +52,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(FolderInfoViewModel::class)
     internal abstract fun lectureFolderInfoViewModel(viewModel: FolderInfoViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BaseLectureListViewModel::class)
+    internal abstract fun baseLectureListViewModel(viewModel: BaseLectureListViewModel): ViewModel
 }

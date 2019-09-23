@@ -1,9 +1,6 @@
 package com.itis2019.lecturerecorder.repository.database
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.itis2019.lecturerecorder.repository.dbEntities.DbFolder
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -17,8 +14,11 @@ interface FolderDao {
     @Query("SELECT * FROM folder_data WHERE id = :id")
     fun getById(id: Long): Single<DbFolder>
 
+    @Update
+    fun update(folder: DbFolder)
+
     @Insert
-    fun insert(folder: DbFolder) : Long
+    fun insert(folder: DbFolder): Long
 
     @Delete
     fun delete(folder: DbFolder)

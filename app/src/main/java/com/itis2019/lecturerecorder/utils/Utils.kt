@@ -11,8 +11,10 @@ import java.util.concurrent.TimeUnit
 
 const val ITEM_VIEW_TYPE_HEADER = 0
 const val ITEM_VIEW_TYPE_ITEM = 1
-const val ITEM_VIEW_TYPE_ITEM_ANOTHER_STYLE = 2
 const val ITEM_VIEW_TYPE_FOLDER = 3
+
+const val MENU_DELETE = 1
+const val MENU_RENAME = 2
 
 fun Context.getFromHtml(stringId: Int, string: String) =
     HtmlCompat.fromHtml(
@@ -41,7 +43,7 @@ fun getRandomGradientColor(): Int = listOf(
     R.drawable.gradient_blue,
     R.drawable.gradient_dark_skies,
     R.drawable.gradient_green,
-    R.drawable.gradient_grey,
+    R.drawable.gradient_hydrogen,
     R.drawable.gradient_orange,
     R.drawable.gradient_purple,
     R.drawable.gradient_red,

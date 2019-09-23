@@ -36,7 +36,7 @@ androidExtensions {
 
 ext {
     dagger = '2.21'
-    navigationVersion = "2.2.0-alpha02"
+    navigationVersion = "2.2.0-alpha03"
     archLifecycleVersion = "1.1.1"
     rxandroid = "2.1.0"
     rxkotlin = "2.3.0"
@@ -80,8 +80,6 @@ dependencies {
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
-
-    implementation 'com.github.ohoussein.playpauseview:playpauseview:1.0.2'
 
     implementation 'com.github.quickpermissions:quickpermissions-kotlin:0.4.1'
 

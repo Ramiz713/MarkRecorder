@@ -1,4 +1,4 @@
-package com.itis2019.lecturerecorder.service.AudioRecording
+package com.itis2019.lecturerecorder.service.audioRecording
 
 import io.reactivex.Flowable
 

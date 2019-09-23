@@ -6,8 +6,9 @@
     <color name="colorHorizonBackground">#334753</color>
     <color name="colorText">#373737</color>
     <color name="colorBackground">#F7F7F7</color>
+    <color name="colorGray">#BDBDBD</color>
     <color name="colorBlackSemiTransparent">#66000000</color>
     <color name="colorWhiteSemiTransparent">#73FFFDFD</color>
-    <color name="colorWhiteSemiTransparent2">#80FFFDFD</color>
+    <color name="colorWhiteSemiTransparentStatusBar">#80FFFDFD</color>
 
 </resources>

@@ -19,9 +19,13 @@ abstract class BaseFragment : Fragment() {
 
     protected abstract fun initViewModel()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initViewModel()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewModel()
         initObservers()
         observeError(view)
     }
