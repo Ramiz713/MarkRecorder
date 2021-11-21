@@ -13,7 +13,7 @@ import dagger.android.support.HasSupportFragmentInjector
 fun Application.autoInject() {
 
     this.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
-        override fun onActivityCreated(activity: Activity?, p1: Bundle?) {
+        override fun onActivityCreated(activity: Activity, p1: Bundle?) {
             activity?.also {
                 if (it is HasSupportFragmentInjector) AndroidInjection.inject(it)
 
@@ -34,11 +34,11 @@ fun Application.autoInject() {
             }
         }
 
-        override fun onActivityPaused(activity: Activity?) {}
-        override fun onActivityResumed(activity: Activity?) {}
-        override fun onActivityStarted(activity: Activity?) {}
-        override fun onActivityDestroyed(activity: Activity?) {}
-        override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {}
-        override fun onActivityStopped(activity: Activity?) {}
+        override fun onActivityPaused(activity: Activity) {}
+        override fun onActivityResumed(activity: Activity) {}
+        override fun onActivityStarted(activity: Activity) {}
+        override fun onActivityDestroyed(activity: Activity) {}
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+        override fun onActivityStopped(activity: Activity) {}
     })
 }

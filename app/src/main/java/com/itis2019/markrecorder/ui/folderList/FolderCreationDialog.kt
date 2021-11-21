@@ -47,7 +47,7 @@ class FolderCreationDialog : DialogFragment() {
                 } else textInput?.error = getString(R.string.is_not_valid)
             }
         }
-        dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         return dialog
     }
 }

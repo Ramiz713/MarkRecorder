@@ -62,6 +62,6 @@ class App : Application(), HasActivityInjector {
         return list.sorted()
             .zipWithNext()
             .map { z -> z.second - z.first - 1 }
-            .max() ?: 0
+            .maxOrNull() ?: 0
     }
 }
